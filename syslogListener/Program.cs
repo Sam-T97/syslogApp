@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Rebex.Net;
 using System.Threading;
-using System.Threading.Tasks;
 namespace syslogListener
 {
     class Program

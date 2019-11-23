@@ -1,0 +1,325 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Rebex.Syslog</name>
+    </assembly>
+    <members>
+        <member name="T:Rebex.Net.FacilityLevel">
+            <summary>
+            Provides facility level of Syslog Message.
+            </summary>
+        </member>
+        <member name="F:Rebex.Net.FacilityLevel.Kernel">
+            <summary>
+            Kernel level.
+            </summary>
+        </member>
+        <member name="F:Rebex.Net.FacilityLevel.User">
+            <summary>
+            User level.
+            </summary>
+        </member>
+        <member name="F:Rebex.Net.FacilityLevel.Mail">
+            <summary>
+            Mail system level.
+            </summary>
+        </member>
+        <member name="F:Rebex.Net.FacilityLevel.System">
+            <summary>
+            System daemons level.
+            </summary>
+        </member>
+        <member name="F:Rebex.Net.FacilityLevel.SecurityAuthorization">
+            <summary>
+            Security/Authorization level.
+            </summary>
+        </member>
+        <member name="F:Rebex.Net.FacilityLevel.Syslog">
+            <summary>
+            Internal Syslog daemon level.
+            </summary>
+        </member>
+        <member name="F:Rebex.Net.FacilityLevel.LinePrinter">
+            <summary>
+            Line Printer subsystem level.
+            </summary>
+        </member>
+        <member name="F:Rebex.Net.FacilityLevel.NetworkNews">
+            <summary>
+            Network News subsystem level.
+            </summary>
+        </member>
+        <member name="F:Rebex.Net.FacilityLevel.Uucp">
+            <summary>
+            UUCP subsystem level.
+            </summary>
+        </member>
+        <member name="F:Rebex.Net.FacilityLevel.Clock">
+            <summary>
+            Clock daemon level.
+            </summary>
+        </member>
+        <member name="F:Rebex.Net.FacilityLevel.SecurityAuthorization2">
+            <summary>
+            Security/Authorization level.
+            </summary>
+        </member>
+        <member name="F:Rebex.Net.FacilityLevel.Ftp">
+            <summary>
+            FTP daemon level.
+            </summary>
+        </member>
+        <member name="F:Rebex.Net.FacilityLevel.Ntp">
+            <summary>
+            NTP subsystem level.
+            </summary>
+        </member>
+        <member name="F:Rebex.Net.FacilityLevel.LogAudit">
+            <summary>
+            Log Audit level.
+            </summary>
+        </member>
+        <member name="F:Rebex.Net.FacilityLevel.LogAlert">
+            <summary>
+            Log Alert level.
+            </summary>
+        </member>
+        <member name="F:Rebex.Net.FacilityLevel.Clock2">
+            <summary>
+            Clock daemon level.
+            </summary>
+        </member>
+        <member name="T:Rebex.Net.SeverityLevel">
+            <summary>
+            Provides severity level of Syslog Message.
+            </summary>
+        </member>
+        <member name="F:Rebex.Net.SeverityLevel.Emergency">
+            <summary>
+            Emergency level (system is unusable).
+            </summary>
+        </member>
+        <member name="F:Rebex.Net.SeverityLevel.Alert">
+            <summary>
+            Alert level (action must be taken immediately).
+            </summary>
+        </member>
+        <member name="F:Rebex.Net.SeverityLevel.Critical">
+            <summary>
+            Critical level (critical conditions).
+            </summary>
+        </member>
+        <member name="F:Rebex.Net.SeverityLevel.Error">
+            <summary>
+            Error level.
+            </summary>
+        </member>
+        <member name="F:Rebex.Net.SeverityLevel.Warning">
+            <summary>
+            Warning level.
+            </summary>
+        </member>
+        <member name="F:Rebex.Net.SeverityLevel.Notice">
+            <summary>
+            Notice level (normal but significant).
+            </summary>
+        </member>
+        <member name="F:Rebex.Net.SeverityLevel.Informational">
+            <summary>
+            Informational level.
+            </summary>
+        </member>
+        <member name="F:Rebex.Net.SeverityLevel.Debug">
+            <summary>
+            Debug level.
+            </summary>
+        </member>
+        <member name="T:Rebex.Net.TransportProtocol">
+            <summary>
+            Provides transport layer protocols of Syslog client.
+            </summary>
+        </member>
+        <member name="F:Rebex.Net.TransportProtocol.Udp">
+            <summary>
+            The UDP transport layer protocol.
+            </summary>
+        </member>
+        <member name="F:Rebex.Net.TransportProtocol.Tcp">
+            <summary>
+            The TCP/IP transport layer protocol.
+            </summary>
+        </member>
+        <member name="T:Rebex.Net.MessageReceivedEventArgs">
+            <summary>
+            Provides data for <see cref="E:Rebex.Net.SyslogServer.MessageReceived"/> events.
+            </summary>
+        </member>
+        <member name="P:Rebex.Net.MessageReceivedEventArgs.Message">
+            <summary>
+            Gets the SYSLOG message.
+            </summary>
+        </member>
+        <member name="T:Rebex.Net.SyslogException">
+            <summary>
+            Represents a SYSLOG error.
+            </summary>
+        </member>
+        <member name="T:Rebex.Net.Syslog">
+            <summary>
+            Represents a SYSLOG client, which can send SYSLOG messages to a SYSLOG server.
+            </summary>
+        </member>
+        <member name="F:Rebex.Net.Syslog.DefaultPort">
+            <summary>
+            Default SYSLOG port number (514)
+            </summary>
+        </member>
+        <member name="M:Rebex.Net.Syslog.#ctor(Rebex.Net.TransportProtocol,System.String)">
+            <summary>
+            Initializes an instance of the <see cref="T:Rebex.Net.Syslog"/> class and bind it to the specified SYSLOG server.
+            </summary>
+            <param name="protocol">The transport layer protocol to use.</param>
+            <param name="hostname">The SYSLOG server hostname.</param>
+        </member>
+        <member name="M:Rebex.Net.Syslog.#ctor(Rebex.Net.TransportProtocol,System.String,System.Int32)">
+            <summary>
+            Initializes an instance of the <see cref="T:Rebex.Net.Syslog"/> class and bind it to the specified SYSLOG server.
+            </summary>
+            <param name="protocol">The transport layer protocol to use.</param>
+            <param name="hostname">The SYSLOG server hostname.</param>
+            <param name="port">The SYSLOG server port.</param>
+        </member>
+        <member name="M:Rebex.Net.Syslog.Send(Rebex.Net.SyslogMessage)">
+            <summary>
+            Sends a message to the connected SYSLOG server.
+            </summary>
+            <param name="message">A SYSLOG message to be sent.</param>
+        </member>
+        <member name="M:Rebex.Net.Syslog.Dispose(System.Boolean)">
+            <summary>
+            Releases the unmanaged resources used by this instance, and optionally disposes of the managed resources.
+            </summary>
+            <param name="disposing">True to release both managed and unmanaged resources; False to releases only unmanaged resources.</param>
+        </member>
+        <member name="M:Rebex.Net.Syslog.Close">
+            <summary>
+            Closes the connection and releases all associated resources. 
+            </summary>
+        </member>
+        <member name="T:Rebex.Net.SyslogMessage">
+            <summary>
+            This class provides functionality for Syslog Message defined in RFC 5424.
+            </summary>
+        </member>
+        <member name="M:Rebex.Net.SyslogMessage.#ctor">
+            <summary>
+            Initializes new empty Syslog message.
+            </summary>
+        </member>
+        <member name="M:Rebex.Net.SyslogMessage.#ctor(System.String)">
+            <summary>
+            Initializes new Syslog message.
+            </summary>
+            <param name="text">A text of the message.</param>
+        </member>
+        <member name="M:Rebex.Net.SyslogMessage.GetRawData">
+            <summary>
+            Gets raw data of this message.
+            </summary>
+        </member>
+        <member name="P:Rebex.Net.SyslogMessage.RemoteEndPoint">
+            <summary>
+            Gets the remote end point from which this syslog message was received.
+            </summary>
+        </member>
+        <member name="P:Rebex.Net.SyslogMessage.Received">
+            <summary>
+            Gets the date and time at which this syslog message was received.
+            </summary>
+        </member>
+        <member name="P:Rebex.Net.SyslogMessage.Facility">
+            <summary>
+            Gets or sets the facility level of this syslog message.
+            </summary>
+        </member>
+        <member name="P:Rebex.Net.SyslogMessage.Severity">
+            <summary>
+            Gets or sets the severity level of this syslog message.
+            </summary>
+        </member>
+        <member name="P:Rebex.Net.SyslogMessage.Text">
+            <summary>
+            Gets or sets the message part of this syslog message.
+            </summary>
+        </member>
+        <member name="P:Rebex.Net.SyslogMessage.TextEncoding">
+            <summary>
+            Gets or sets the encoding for message part of this syslog message.
+            Default is <see cref="P:System.Text.Encoding.UTF8"/>, which emits BOM (\xEF\xBB\xBF).
+            </summary>
+        </member>
+        <member name="T:Rebex.Net.SyslogServer">
+            <summary>
+            Represents a SYSLOG server, which can receive SYSLOG messages.
+            </summary>
+        </member>
+        <member name="M:Rebex.Net.SyslogServer.#ctor">
+            <summary>
+            Initializes an instance of the <see cref="T:Rebex.Net.SyslogServer"/> class and binds it to default port (514).
+            </summary>
+        </member>
+        <member name="M:Rebex.Net.SyslogServer.#ctor(System.Int32)">
+            <summary>
+            Initializes an instance of the <see cref="T:Rebex.Net.SyslogServer"/> class and binds it to specified port.
+            </summary>
+            <param name="port">A port to listen on.</param>
+        </member>
+        <member name="M:Rebex.Net.SyslogServer.#ctor(System.String,System.Int32)">
+            <summary>
+            Initializes an instance of the <see cref="T:Rebex.Net.SyslogServer"/> class and binds it to specified hostname and port.
+            </summary>
+            <param name="hostname">A host address to listen on.</param>
+            <param name="port">A port to listen on.</param>
+        </member>
+        <member name="M:Rebex.Net.SyslogServer.#ctor(System.Net.IPEndPoint)">
+            <summary>
+            Initializes an instance of the <see cref="T:Rebex.Net.SyslogServer"/> class and binds it to specified end point.
+            </summary>
+            <param name="endpoint">An IP end point to listen on.</param>
+        </member>
+        <member name="M:Rebex.Net.SyslogServer.Stop">
+            <summary>
+            Stops the server.
+            </summary>
+        </member>
+        <member name="M:Rebex.Net.SyslogServer.Start">
+            <summary>
+            Starts the server.
+            </summary>
+        </member>
+        <member name="E:Rebex.Net.SyslogServer.MessageReceived">
+            <summary>
+            Occurs when a SYSLOG message is received.
+            </summary>
+        </member>
+        <member name="P:Rebex.Net.SyslogServer.UdpEnabled">
+            <summary>
+            Gets or sets a value indicating whether the UDP transport layer protocol is enabled.
+            </summary>
+        </member>
+        <member name="P:Rebex.Net.SyslogServer.UdpBufferSize">
+            <summary>
+            Gets or sets the buffer size of underlying UDP socket (zero means system default value).
+            </summary>
+        </member>
+        <member name="P:Rebex.Net.SyslogServer.TcpEnabled">
+            <summary>
+            Gets or sets a value indicating whether the TCP transport layer protocol is enabled.
+            </summary>
+            <remarks>
+            Only the 'Octet Counting' message transfer is supported
+            (the 'Non-Transparent-Framing' message transfer is NOT supported).
+            </remarks>
+        </member>
+    </members>
+</doc>

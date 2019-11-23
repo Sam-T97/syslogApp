@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Rebex.Net;
 using System.Threading;
+
 namespace syslogListener
 {
     class Program
@@ -9,7 +10,6 @@ namespace syslogListener
         private static Queue<SyslogMessage> queue = new Queue<SyslogMessage>();
         static void Main(string[] args)
         {
-            Console.WriteLine("Starting listener");
             SyslogServer server = new SyslogServer(Syslog.DefaultPort) {TcpEnabled = true, UdpEnabled = true};
             server.MessageReceived += Server_MessageReceived;
             server.Start();

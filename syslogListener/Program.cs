@@ -2,6 +2,13 @@
 using System.Collections.Generic;
 using Rebex.Net;
 using System.Threading;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using Microsoft.Extensions.Configuration;
+using SyslogShared;
+using SyslogShared.Models;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using syslogSite.Data;
 
 namespace syslogListener
 {
@@ -14,6 +21,10 @@ namespace syslogListener
             server.MessageReceived += Server_MessageReceived;
             server.Start();
             Console.WriteLine("Starting syslog listener");
+            using var dbContext = GetContext();
+            var alert = new Alerts {ID = 123, message = "test"};
+            dbContext.Add(alert);
+            dbContext.SaveChanges();
             Thread writeMessage = new Thread(new ThreadStart(test));
             writeMessage.Start();
             writeMessage.Join();
@@ -46,6 +57,30 @@ namespace syslogListener
                     // ignored
                 }
             }
+        }
+
+        public static ApplicationDbContext GetContext()
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+            optionsBuilder.UseMySql(
+                GetConfig().GetConnectionString("DefaultConnection"),
+                mySqlOptions =>
+                {
+                    mySqlOptions.ServerVersion(new Version(8, 0, 17), ServerType.MySql);
+                    mySqlOptions.MigrationsAssembly("syslogSite");
+                });
+
+            return new ApplicationDbContext(optionsBuilder.Options);
+        }
+        private static IConfiguration GetConfig()
+        {
+            var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+            var builder = new ConfigurationBuilder()
+                .AddJsonFile($"appsettings.json", true, true)
+                .AddJsonFile($"appsettings.{environmentName}.json", true, true)
+                .AddEnvironmentVariables();
+            return builder.Build();
         }
     }
 }

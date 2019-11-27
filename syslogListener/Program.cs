@@ -72,7 +72,7 @@ namespace syslogListener
                 }
                 catch
                 {
-                    // ignored
+                    // ignored queue is empty 
                 }
             }
         }

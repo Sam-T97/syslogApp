@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using Rebex.Net;
 using System.Threading;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using Microsoft.Extensions.Configuration;
-using SyslogShared;
 using SyslogShared.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using syslogSite.Data;
@@ -21,11 +19,21 @@ namespace syslogListener
             server.MessageReceived += Server_MessageReceived;
             server.Start();
             Console.WriteLine("Starting syslog listener");
-            using var dbContext = GetContext();
-            var alert = new Alerts {ID = 123, message = "test"};
-            dbContext.Add(alert);
+            Thread writeMessage = new Thread(MessageHandler);
+            // Test method for adding a random syslog entry to the table remove when testing concluded
+            /*
+            var dbContext = GetContext();
+            var Alert = new Alerts
+            {
+                Facility = "User",
+                Received = DateTime.Now,
+                HostIP = "127.0.0.1",
+                Severity = 5,
+                Message = "A Test Error"
+            };
+            dbContext.alerts.Add(Alert);
             dbContext.SaveChanges();
-            Thread writeMessage = new Thread(new ThreadStart(test));
+            */
             writeMessage.Start();
             writeMessage.Join();
         }
@@ -43,18 +51,28 @@ namespace syslogListener
                 Console.WriteLine(e.Message);
             }
         }
-        private static void test()
+        private static void MessageHandler()
         {
             while (true)
             {
                 try
                 {
                     SyslogMessage m = queue.Dequeue();
-                    Console.WriteLine("{0} {1} {2} {3}",m.RemoteEndPoint,m.Facility,m.Severity,m.Text);
+                    var dbContext = GetContext();
+                    var Alert = new Alerts
+                    {
+                        Facility = m.Facility.ToString(),
+                        Received = m.Received,
+                        HostIP = m.RemoteEndPoint.ToString(),
+                        Severity = (int)m.Severity,
+                        Message = m.Text
+                    };
+                    dbContext.alerts.Add(Alert);
+                    dbContext.SaveChanges();
                 }
                 catch
                 {
-                    // ignored
+                    // ignored queue is empty 
                 }
             }
         }

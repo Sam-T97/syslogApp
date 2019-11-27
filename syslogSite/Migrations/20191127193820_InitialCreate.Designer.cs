@@ -9,8 +9,8 @@ using syslogSite.Data;
 namespace syslogSite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191127161238_CreateIdentitySchema")]
-    partial class CreateIdentitySchema
+    [Migration("20191127193820_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -215,18 +215,30 @@ namespace syslogSite.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("syslogSite.Data.Models.SyslogMessage", b =>
+            modelBuilder.Entity("SyslogShared.Models.Alerts", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("message")
+                    b.Property<string>("Facility")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("HostIP")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<DateTime>("Received")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("Severity")
+                        .HasColumnType("int");
 
                     b.HasKey("ID");
 
-                    b.ToTable("Messages");
+                    b.ToTable("Alerts");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

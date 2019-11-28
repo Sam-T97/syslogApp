@@ -36,6 +36,7 @@ namespace syslogListener
             */
             writeMessage.Start();
             writeMessage.Join();
+            Console.WriteLine("System now listening to syslog messages");
         }
 
         private static void Server_MessageReceived(object sender, MessageReceivedEventArgs e)
@@ -69,10 +70,11 @@ namespace syslogListener
                     };
                     dbContext.alerts.Add(Alert);
                     dbContext.SaveChanges();
+                    Console.WriteLine("Message handled and saved to database");
                 }
                 catch
                 {
-                    // ignored queue is empty 
+                    Thread.Sleep(2000);
                 }
             }
         }
@@ -93,7 +95,6 @@ namespace syslogListener
         private static IConfiguration GetConfig()
         {
             var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-
             var builder = new ConfigurationBuilder()
                 .AddJsonFile($"appsettings.json", true, true)
                 .AddJsonFile($"appsettings.{environmentName}.json", true, true)

@@ -89,7 +89,7 @@ namespace syslogListener
         private static void EmailAlert(SyslogMessage m)
         {
             using var message = new MailMessage();
-            message.To.Add(""//TODO get emails from db);
+            message.To.Add("");//TODO get emails from db
             message.From = new MailAddress("syslogsnapper@gmail.com", "SyslogSnapper");
             message.Subject = "A high priority alert has been received from " + m.RemoteEndPoint.Address;
             message.Body = "The details are as follows: <br/> Received: " + m.Received
@@ -106,7 +106,7 @@ namespace syslogListener
                     EnableSsl = true,
                     UseDefaultCredentials = false,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
-                    Credentials = new NetworkCredential("syslogsnapper@gmail.com", ""//TODO password here)
+                    Credentials = new NetworkCredential("syslogsnapper@gmail.com", "")//TODO password here
                 };
                 client.Send(message);
             }

@@ -7,12 +7,15 @@ using Microsoft.Extensions.Configuration;
 using SyslogShared.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using syslogSite.Data;
+using System.Net.Mail;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace syslogListener
 {
     class Program
     {
-        private static Queue<SyslogMessage> queue = new Queue<SyslogMessage>();
+        private static readonly Queue<SyslogMessage> Queue = new Queue<SyslogMessage>();
         static void Main(string[] args)
         {
             SyslogServer server = new SyslogServer(Syslog.DefaultPort) {TcpEnabled = true, UdpEnabled = true};
@@ -43,7 +46,7 @@ namespace syslogListener
         {
             try
             {
-                queue.Enqueue(e.Message);
+                Queue.Enqueue(e.Message);
                 Console.WriteLine("Message received added to processing buffer");
             }
             catch
@@ -58,7 +61,7 @@ namespace syslogListener
             {
                 try
                 {
-                    SyslogMessage m = queue.Dequeue();
+                    SyslogMessage m = Queue.Dequeue();
                     var dbContext = GetContext();
                     var Alert = new Alerts
                     {
@@ -69,6 +72,10 @@ namespace syslogListener
                         Message = m.Text
                     };
                     dbContext.alerts.Add(Alert);
+                    if (Alert.Severity < 4)
+                    {
+                        //Task.Run(() => EmailAlert(m));
+                    }
                     dbContext.SaveChanges();
                     Console.WriteLine("Message handled and saved to database");
                 }
@@ -76,6 +83,38 @@ namespace syslogListener
                 {
                     Thread.Sleep(2000);
                 }
+            }
+        }
+
+        private static void EmailAlert(SyslogMessage m)
+        {
+            using var message = new MailMessage();
+            message.To.Add("SamTaylor0497@gmail.com");
+            message.From = new MailAddress("syslogsnapper@gmail.com", "SyslogSnapper");
+            message.Subject = "A high priority alert has been received from " + m.RemoteEndPoint.Address;
+            message.Body = "The details are as follows: <br/> Received: " + m.Received
+                                                                       + "<br/> Facility: " + m.Facility
+                                                                       + "<br/> Severity: " + m.Severity
+                                                                       + "<br/> Full Message: " + m.Text;
+            message.IsBodyHtml = true;
+            try
+            {
+                using var client = new SmtpClient()
+                {
+                    Host = "smtp.gmail.com",
+                    Port = 587,
+                    EnableSsl = true,
+                    UseDefaultCredentials = false,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    Credentials = new NetworkCredential("syslogsnapper@gmail.com", "Syslogsn@pper1")
+
+
+                };
+                client.Send(message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
             }
         }
 

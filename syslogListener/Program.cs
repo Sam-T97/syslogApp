@@ -9,7 +9,6 @@ using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using syslogSite.Data;
 using System.Net.Mail;
 using System.Net;
-using System.Security;
 using System.Threading.Tasks;
 
 namespace syslogListener

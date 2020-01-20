@@ -9,6 +9,7 @@ using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using syslogSite.Data;
 using System.Net.Mail;
 using System.Net;
+using System.Security;
 using System.Threading.Tasks;
 
 namespace syslogListener
@@ -16,8 +17,12 @@ namespace syslogListener
     class Program
     {
         private static readonly Queue<SyslogMessage> Queue = new Queue<SyslogMessage>();
+        private static string gmailPassword;
         static void Main(string[] args)
         {
+            Console.WriteLine("Enter password for email account used to send alerts");
+            gmailPassword = Console.ReadLine(); //TODO secure password for deployments 
+            Console.Clear();
             SyslogServer server = new SyslogServer(Syslog.DefaultPort) {TcpEnabled = true, UdpEnabled = true};
             server.MessageReceived += Server_MessageReceived;
             server.Start();
@@ -39,7 +44,6 @@ namespace syslogListener
             */
             writeMessage.Start();
             writeMessage.Join();
-            Console.WriteLine("System now listening to syslog messages");
         }
 
         private static void Server_MessageReceived(object sender, MessageReceivedEventArgs e)
@@ -106,7 +110,7 @@ namespace syslogListener
                     EnableSsl = true,
                     UseDefaultCredentials = false,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
-                    Credentials = new NetworkCredential("syslogsnapper@gmail.com", "")//TODO password here
+                    Credentials = new NetworkCredential("syslogsnapper@gmail.com", gmailPassword)//TODO password here
                 };
                 client.Send(message);
             }

@@ -74,7 +74,7 @@ namespace syslogListener
                     dbContext.alerts.Add(Alert);
                     if (Alert.Severity < 4)
                     {
-                        //Task.Run(() => EmailAlert(m));
+                        Task.Run(() => EmailAlert(m));
                     }
                     dbContext.SaveChanges();
                     Console.WriteLine("Message handled and saved to database");

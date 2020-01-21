@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Rebex.Net;
 using System.Threading;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ namespace syslogListener
         private static Queue<SyslogMessage> queue = new Queue<SyslogMessage>();
         static void Main(string[] args)
         {
+            var dbContext = GetContext();
             SyslogServer server = new SyslogServer(Syslog.DefaultPort) {TcpEnabled = true, UdpEnabled = true};
             server.MessageReceived += Server_MessageReceived;
             server.Start();
@@ -89,7 +91,6 @@ namespace syslogListener
                     mySqlOptions.ServerVersion(new Version(8, 0, 17), ServerType.MySql);
                     mySqlOptions.MigrationsAssembly("syslogSite");
                 });
-
             return new ApplicationDbContext(optionsBuilder.Options);
         }
         private static IConfiguration GetConfig()

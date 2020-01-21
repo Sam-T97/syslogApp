@@ -3,8 +3,29 @@
 @{
     ViewData["Title"] = "Home page";
 }
-
+<style>
+.grid-container{
+display:grid;
+grid-template-columns: auto auto;
+padding: 10px;
+}
+.grid-item{
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  font-size: 30px;
+  text-align: center;
+}
+</style>
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <p>Here is a current breakdown of the network situation:</p>
+</div>
+<div class="grid-container">
+    <div class="grid-item">
+        <h2>Amount of Alerts by Type:</h2>
+        @Model.
+    </div>
+    <div class="grid-item">2</div>
+    <div class="grid-item">3</div>
+    <div class="grid-item">4</div>
 </div>

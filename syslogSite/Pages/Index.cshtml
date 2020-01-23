@@ -5,9 +5,9 @@
 }
 <style>
 .grid-container{
-display:grid;
-grid-template-columns: auto auto;
-padding: 10px;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    padding: 10px;
 }
 .grid-item{
   border: 1px solid rgba(0, 0, 0, 0.8);
@@ -18,14 +18,48 @@ padding: 10px;
 </style>
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Here is a current breakdown of the network situation:</p>
+    <h2>Here is a current breakdown of the network situation:</h2>
 </div>
 <div class="grid-container">
     <div class="grid-item">
-        <h2>Amount of Alerts by Type:</h2>
-        @Model.
+        <h3>Total Alerts in the System:</h3>
+        <text>@Model.AlertTotal</text>
+        <h3>Breakdown of Alerts:</h3>
+        <text id="0"></text><br/>
+        <text id="1"></text><br/>
+        <text id="2"></text><br/>
+        <text id="3"></text><br/>
+        <text id="4"></text><br/>
+        <text id="5"></text><br/>
+        <text id="6"></text><br/>
+        <text id="7"></text>
     </div>
     <div class="grid-item">2</div>
     <div class="grid-item">3</div>
     <div class="grid-item">4</div>
 </div>
+@section Scripts{
+    <script>
+        $(document).ready(function() {
+            updateMetrics();
+            window.setInterval(updateMetrics, 10000);
+        });
+        function updateMetrics() {
+            $.ajax(
+                {
+                    type: "GET",
+                    url: "/Index?handler=UpdateMetrics",
+                    data: {},
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (data) {
+                        var dataObj = JSON.parse(data);
+                        var errorNames = ["Emergency", "Alert", "Critical", "Error", "Warning", "Notification", "Information", "Debug"];
+                        for (var i = 0; i < 8; i++) {
+                            document.getElementById(i).innerText = errorNames[i] + ": " + dataObj[errorNames[i]];
+                        }
+                    }
+                });
+        }
+    </script>
+}

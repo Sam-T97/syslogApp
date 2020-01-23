@@ -43,7 +43,7 @@ namespace syslogSite.Pages
             {
                 counts.Add(ErrorNames[i], _context.alerts.Count(a => a.Severity == i).ToString());
             }
-
+            counts.Add("Total", _context.alerts.Count().ToString());
             return new JsonResult(JsonConvert.SerializeObject(counts));
         }
         public static ApplicationDbContext GetContext()

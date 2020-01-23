@@ -4,17 +4,18 @@
     ViewData["Title"] = "Home page";
 }
 <style>
-.grid-container{
-    display: grid;
-    grid-template-columns: 50% 50%;
-    padding: 10px;
-}
-.grid-item{
-  border: 1px solid rgba(0, 0, 0, 0.8);
-  padding: 20px;
-  font-size: 30px;
-  text-align: center;
-}
+    .grid-container {
+        display: grid;
+        grid-template-columns: 50% 50%;
+        padding: 10px;
+    }
+
+    .grid-item {
+        border: 1px solid rgba(0, 0, 0, 0.8);
+        padding: 0px;
+        font-size: 20px;
+        text-align: center;
+    }
 </style>
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
@@ -22,27 +23,28 @@
 </div>
 <div class="grid-container">
     <div class="grid-item">
-        <h3>Total Alerts in the System:</h3>
-        <text>@Model.AlertTotal</text>
-        <h3>Breakdown of Alerts:</h3>
-        <text id="0"></text><br/>
-        <text id="1"></text><br/>
-        <text id="2"></text><br/>
-        <text id="3"></text><br/>
-        <text id="4"></text><br/>
-        <text id="5"></text><br/>
-        <text id="6"></text><br/>
-        <text id="7"></text>
+        <h4>Alerts by Type:</h4>
+        <text id="0"></text><br />
+        <text id="1"></text><br />
+        <text id="2"></text><br />
+        <text id="3"></text><br />
+        <text id="4"></text><br />
+        <text id="5"></text><br />
+        <text id="6"></text><br />
+        <text id="7"></text><br />
+        <b><text id="8"></text></b>
     </div>
-    <div class="grid-item">2</div>
-    <div class="grid-item">3</div>
-    <div class="grid-item">4</div>
+    <div class="grid-item"><h4>Syslog Messages by Type:</h4><canvas id="myChart"></canvas></div>
+    <div class="grid-item"><h4>Inbound Message Rate:</h4></div>
+    <div class="grid-item"><h4>Top 5 Most Troublesome Systems:</h4></div>
 </div>
 @section Scripts{
+    <script src="js/Chart.js"></script>
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             updateMetrics();
             window.setInterval(updateMetrics, 10000);
+            
         });
         function updateMetrics() {
             $.ajax(
@@ -54,10 +56,57 @@
                     dataType: "json",
                     success: function (data) {
                         var dataObj = JSON.parse(data);
-                        var errorNames = ["Emergency", "Alert", "Critical", "Error", "Warning", "Notification", "Information", "Debug"];
-                        for (var i = 0; i < 8; i++) {
+                        var numbers = [];
+                        var errorNames = ["Emergency", "Alert", "Critical", "Error", "Warning", "Notification", "Information", "Debug", "Total"];
+                        for (var i = 0; i < 9; i++) {
                             document.getElementById(i).innerText = errorNames[i] + ": " + dataObj[errorNames[i]];
+                            numbers.push(parseInt(dataObj[errorNames[i]]));
                         }
+                        errorNames.pop();
+                        numbers.pop();
+                        var ctx = document.getElementById('myChart');
+                        var myChart = new Chart(ctx,
+                            {
+                                type: 'bar',
+                                data: {
+                                    labels: errorNames,
+                                    datasets: [
+                                        {
+                                            label: '# of Messages',
+                                            data: numbers,
+                                            backgroundColor: [
+                                                'rgba(255, 99, 132, 0.2)',
+                                                'rgba(54, 162, 235, 0.2)',
+                                                'rgba(255, 206, 86, 0.2)',
+                                                'rgba(75, 192, 192, 0.2)',
+                                                'rgba(153, 102, 255, 0.2)',
+                                                'rgba(255, 159, 64, 0.2)'
+                                            ],
+                                            borderColor: [
+                                                'rgba(255, 99, 132, 1)',
+                                                'rgba(54, 162, 235, 1)',
+                                                'rgba(255, 206, 86, 1)',
+                                                'rgba(75, 192, 192, 1)',
+                                                'rgba(153, 102, 255, 1)',
+                                                'rgba(255, 159, 64, 1)'
+                                            ],
+                                            borderWidth: 0
+                                        }
+                                    ]
+
+                                },
+                                options: {
+                                    scales: {
+                                        yAxes: [
+                                            {
+                                                ticks: {
+                                                    beginAtZero: true
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            });
                     }
                 });
         }

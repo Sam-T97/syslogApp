@@ -34,19 +34,40 @@
         <text id="7"></text><br />
         <b><text id="8"></text></b>
     </div>
-    <div class="grid-item"><h4>Syslog Messages by Type:</h4><canvas id="myChart"></canvas></div>
-    <div class="grid-item"><h4>Inbound Message Rate:</h4></div>
-    <div class="grid-item"><h4>Top 5 Most Troublesome Systems:</h4></div>
+    <!--Chart form of the above data-->
+    <div class="grid-item"><h4>Syslog Messages by Type:</h4><canvas id="messageType"></canvas></div>
+    <!--Line graph of messages inbound over a user defined interval-->
+    <div class="grid-item"><h4>Inbound Message Rate:</h4>
+        <label>Select interval:</label>&nbsp;<select id="interval">
+            <option>Past Hour</option>
+            <option>Past Day</option>
+            <option>Past 7 Days</option>
+            <option>Past 30 Days</option>
+        </select>
+        <canvas id="messageTime"></canvas>
+        </div>
+    <div class="grid-item">
+        <h4>Top 5 Most Troublesome Systems:</h4>
+        <text id="trouble0"></text><br />
+        <text id="trouble1"></text><br />
+        <text id="trouble2"></text><br />
+        <text id="trouble3"></text><br />
+        <text id="trouble4"></text>
+    </div>
 </div>
 @section Scripts{
+    <!-- set chartJS script -> source: https://www.chartjs.org/ used under MIT license-->
     <script src="js/Chart.js"></script>
     <script>
         $(document).ready(function () {
+            //collect first set of metrics and update them every 10 seconds
             updateMetrics();
             window.setInterval(updateMetrics, 10000);
-            
+
         });
+
         function updateMetrics() {
+            //attempt ajax call to DB to collect metrics in JSON format
             $.ajax(
                 {
                     type: "GET",
@@ -55,17 +76,25 @@
                     contentType: "application/json",
                     dataType: "json",
                     success: function (data) {
+                        //parse out the JSON to a JS array
                         var dataObj = JSON.parse(data);
-                        var numbers = [];
-                        var errorNames = ["Emergency", "Alert", "Critical", "Error", "Warning", "Notification", "Information", "Debug", "Total"];
+                        var numbers = []; //prepared to collect data from each JSON key
+                        var errorNames = [
+                            "Emergency", "Alert", "Critical",
+                            "Error", "Warning", "Notification",
+                            "Information", "Debug", "Total"
+                        ]; //array of keys used in the JSON data for faster collection
+
                         for (var i = 0; i < 9; i++) {
-                            document.getElementById(i).innerText = errorNames[i] + ": " + dataObj[errorNames[i]];
-                            numbers.push(parseInt(dataObj[errorNames[i]]));
+                            document.getElementById(i).innerText = errorNames[i] + ": " + dataObj[errorNames[i]]; //place the metric in each area of section 1
+                            numbers.push(parseInt(dataObj[errorNames[i]])); //append metric to the array for the graph function later
                         }
+                        //remove total from each array before making the graph
                         errorNames.pop();
                         numbers.pop();
-                        var ctx = document.getElementById('myChart');
-                        var myChart = new Chart(ctx,
+                        //construct ChartJS bar graph to visualise counts of each error type
+                        var ctx = document.getElementById('messageType');
+                        var messageType = new Chart(ctx,
                             {
                                 type: 'bar',
                                 data: {

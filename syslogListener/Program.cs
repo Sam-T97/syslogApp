@@ -9,6 +9,7 @@ using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using syslogSite.Data;
 using System.Net.Mail;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace syslogListener
@@ -27,20 +28,6 @@ namespace syslogListener
             server.Start();
             Console.WriteLine("Starting syslog listener");
             Thread writeMessage = new Thread(MessageHandler);
-            // Test method for adding a random syslog entry to the table remove when testing concluded
-            /*
-            var dbContext = GetContext();
-            var Alert = new Alerts
-            {
-                Facility = "User",
-                Received = DateTime.Now,
-                HostIP = "127.0.0.1",
-                Severity = 5,
-                Message = "A Test Error"
-            };
-            dbContext.alerts.Add(Alert);
-            dbContext.SaveChanges();
-            */
             writeMessage.Start();
             writeMessage.Join();
         }
@@ -68,14 +55,14 @@ namespace syslogListener
                     var dbContext = GetContext();
                     var Alert = new Alerts
                     {
-                        Facility = m.Facility.ToString(),
+                        Facility = (Regex.Match(m.Text, @"(?<=%)(.*?)(?=-)").ToString()),//m.Facility.ToString(),
                         Received = m.Received,
                         HostIP = m.RemoteEndPoint.ToString(),
                         Severity = (int)m.Severity,
                         Message = m.Text
                     };
                     dbContext.alerts.Add(Alert);
-                    if (Alert.Severity < 4)
+                    if (Alert.Severity < 3)
                     {
                         Task.Run(() => EmailAlert(m));
                     }

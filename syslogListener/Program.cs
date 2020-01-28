@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using SyslogShared.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using syslogSite.Data;
+using System.Text.RegularExpressions;
 
 namespace syslogListener
 {
@@ -64,7 +65,7 @@ namespace syslogListener
                     var dbContext = GetContext();
                     var Alert = new Alerts
                     {
-                        Facility = m.Facility.ToString(),
+                        Facility = (Regex.Match(m.Text,@"(?<=%)(.*?)(?=-)").ToString()),//m.Facility.ToString(),
                         Received = m.Received,
                         HostIP = m.RemoteEndPoint.ToString(),
                         Severity = (int)m.Severity,

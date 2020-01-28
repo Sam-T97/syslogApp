@@ -38,7 +38,7 @@
     <div class="grid-item"><h4>Syslog Messages by Type:</h4><canvas id="messageType"></canvas></div>
     <!--Line graph of messages inbound over a user defined interval-->
     <div class="grid-item"><h4>Inbound Message Rate:</h4>
-        <label>Select interval:</label>&nbsp;<select id="interval">
+        <label>Select interval:</label>&nbsp;<select id="interval" onchange="updateRateInterval()">
             <option>Past Hour</option>
             <option>Past Day</option>
             <option>Past 7 Days</option>
@@ -84,9 +84,15 @@
                             "Error", "Warning", "Notification",
                             "Information", "Debug", "Total"
                         ]; //array of keys used in the JSON data for faster collection
+                        var errorDescriptors = [
+                            "System Unusable/Unstable", "Immediate Action Needed", "Investigate Immediately",
+                            "Something has Stopped Working", "Something is not Behaving Correctly",
+                            "Normal but significant condition", "FYI Only", "For Testing"
+                        ];
 
                         for (var i = 0; i < 9; i++) {
-                            document.getElementById(i).innerText = errorNames[i] + ": " + dataObj[errorNames[i]]; //place the metric in each area of section 1
+                            document.getElementById(i).innerText = errorNames[i] + " (" +
+                            errorDescriptors[i] + "): " + dataObj[errorNames[i]]; //place the metric in each area of section 1
                             numbers.push(parseInt(dataObj[errorNames[i]])); //append metric to the array for the graph function later
                         }
                         //remove total from each array before making the graph
@@ -138,6 +144,10 @@
                             });
                     }
                 });
+        }
+        function updateRateInterval() {
+            alert(document.getElementById("interval").selectedIndex);
+            
         }
     </script>
 }

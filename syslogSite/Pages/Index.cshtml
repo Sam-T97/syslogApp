@@ -90,11 +90,13 @@
                             "Normal but significant condition", "FYI Only", "For Testing"
                         ];
 
-                        for (var i = 0; i < 9; i++) {
-                            document.getElementById(i).innerText = errorNames[i] + " (" +
-                            errorDescriptors[i] + "): " + dataObj[errorNames[i]]; //place the metric in each area of section 1
+                        for (var i = 0; i < 8; i++) {
+                            document.getElementById(i).innerText = errorNames[i] + ": "
+                                + dataObj[errorNames[i]]; //place the metric in each area of section 1
+                            document.getElementById(i).setAttribute("title", errorDescriptors[i]); //set the tooltip value to the error description 
                             numbers.push(parseInt(dataObj[errorNames[i]])); //append metric to the array for the graph function later
                         }
+                        document.getElementById("8").innerText = errorNames[8] + ": " + dataObj[errorNames[8]];
                         //remove total from each array before making the graph
                         errorNames.pop();
                         numbers.pop();

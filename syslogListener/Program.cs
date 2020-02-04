@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Rebex.Net;
 using System.Threading;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using SyslogShared.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using syslogSite.Data;
+using System.Text.RegularExpressions;
 using System.Net.Mail;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -20,6 +22,7 @@ namespace syslogListener
         private static string gmailPassword;
         static void Main(string[] args)
         {
+            var dbContext = GetContext();
             Console.WriteLine("Enter password for email account used to send alerts");
             gmailPassword = Console.ReadLine(); //TODO secure password for deployments 
             Console.Clear();
@@ -55,7 +58,7 @@ namespace syslogListener
                     var dbContext = GetContext();
                     var Alert = new Alerts
                     {
-                        Facility = (Regex.Match(m.Text, @"(?<=%)(.*?)(?=-)").ToString()),//m.Facility.ToString(),
+                        Facility = (Regex.Match(m.Text,@"(?<=%)(.*?)(?=-)").ToString()),//m.Facility.ToString(),
                         Received = m.Received,
                         HostIP = m.RemoteEndPoint.ToString(),
                         Severity = (int)m.Severity,
@@ -116,7 +119,6 @@ namespace syslogListener
                     mySqlOptions.ServerVersion(new Version(8, 0, 17), ServerType.MySql);
                     mySqlOptions.MigrationsAssembly("syslogSite");
                 });
-
             return new ApplicationDbContext(optionsBuilder.Options);
         }
         private static IConfiguration GetConfig()

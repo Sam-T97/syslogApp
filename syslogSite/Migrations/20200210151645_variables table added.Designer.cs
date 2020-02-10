@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using syslogSite.Data;
 
 namespace syslogSite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200210151645_variables table added")]
+    partial class variablestableadded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -219,9 +221,6 @@ namespace syslogSite.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int?>("DeviceID")
-                        .HasColumnType("int");
-
                     b.Property<string>("Facility")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
@@ -238,8 +237,6 @@ namespace syslogSite.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ID");
-
-                    b.HasIndex("DeviceID");
 
                     b.ToTable("alerts");
                 });
@@ -259,46 +256,6 @@ namespace syslogSite.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("appvars");
-                });
-
-            modelBuilder.Entity("SyslogShared.Models.Device", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("HostName")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<string>("IP")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("Devices");
-                });
-
-            modelBuilder.Entity("SyslogShared.Models.RemoteDevice", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("DeviceID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("HostName")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<string>("IP")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("DeviceID")
-                        .IsUnique();
-
-                    b.ToTable("RemoteDevices");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -348,22 +305,6 @@ namespace syslogSite.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("SyslogShared.Models.Alerts", b =>
-                {
-                    b.HasOne("SyslogShared.Models.Device", null)
-                        .WithMany("Alerts")
-                        .HasForeignKey("DeviceID");
-                });
-
-            modelBuilder.Entity("SyslogShared.Models.RemoteDevice", b =>
-                {
-                    b.HasOne("SyslogShared.Models.Device", "Device")
-                        .WithOne("RemoteDevice")
-                        .HasForeignKey("SyslogShared.Models.RemoteDevice", "DeviceID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using syslogSite.Data;
 
 namespace syslogSite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200210154234_DeviceTables")]
+    partial class DeviceTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -219,9 +221,6 @@ namespace syslogSite.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int?>("DeviceID")
-                        .HasColumnType("int");
-
                     b.Property<string>("Facility")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
@@ -238,8 +237,6 @@ namespace syslogSite.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ID");
-
-                    b.HasIndex("DeviceID");
 
                     b.ToTable("alerts");
                 });
@@ -350,13 +347,6 @@ namespace syslogSite.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("SyslogShared.Models.Alerts", b =>
-                {
-                    b.HasOne("SyslogShared.Models.Device", null)
-                        .WithMany("Alerts")
-                        .HasForeignKey("DeviceID");
                 });
 
             modelBuilder.Entity("SyslogShared.Models.RemoteDevice", b =>

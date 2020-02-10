@@ -31,7 +31,6 @@ namespace syslogSite.Pages
         public void OnGet()
         {
             AlertTotal = _context.alerts.Count().ToString();
-
         }
 
         public JsonResult OnGetUpdateMetrics()

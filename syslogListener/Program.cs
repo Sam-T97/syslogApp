@@ -7,12 +7,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using SyslogShared.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
-using syslogSite.Data;
 using System.Text.RegularExpressions;
 using System.Net.Mail;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using SyslogShared;
 
 namespace syslogListener
 {

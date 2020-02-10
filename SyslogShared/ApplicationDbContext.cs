@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SyslogShared.Models;
 
-namespace syslogSite.Data
+namespace SyslogShared
 {
     public class ApplicationDbContext : IdentityDbContext
     {

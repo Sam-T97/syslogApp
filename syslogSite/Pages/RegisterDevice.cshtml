@@ -1,0 +1,51 @@
+﻿@page
+@model syslogSite.Pages.RegisterDeviceModel
+
+@{
+    ViewData["Title"] = "Register a Device to Monitoring";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Register a Device to Monitoring</h1>
+
+<h4>Fill out the Device Details Below:</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Device.IP" class="control-label"></label>
+                <input asp-for="Device.IP" class="form-control"/>
+                <span asp-validation-for="Device.IP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Device.HostName" class="control-label"></label>
+                <input asp-for="Device.HostName" class="form-control" />
+                <span asp-validation-for="Device.HostName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Add This Device" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+    <div class="col-md-6 col-md-offset-2">
+        <div>
+            <p>
+                <br/>
+                The IP address for your system will be the internal address it is using to communicate with the monitoring system.
+                <br/>
+                <br/>
+                Unsure what the hostname is? Enter the IP address and select detect hostname, I will try to automatically find it for you.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div>
+    <a asp-page="Index">Back to the Home Screen</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -22,8 +22,29 @@
                         <li class="nav-item">
                             <a class="nav-link text-light" asp-area="" asp-page="/Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-page="/Privacy">Privacy</a>
+                        <li>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle bg-dark border-dark" type="button" id="devicesDropDownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Device Administration
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="devicesDropDownButton">
+                                    <a class="dropdown-item" href="/RegisterDevice">Register Device for Monitoring</a>
+                                    <a class="dropdown-item" href="#">Another action</a>
+                                    <a class="dropdown-item" href="#">Something else here</a>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle bg-dark border-dark" type="button" id="reportingDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Reporting
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="reportingDropDown">
+                                    <a class="dropdown-item" href="#">Action</a>
+                                    <a class="dropdown-item" href="#">Another action</a>
+                                    <a class="dropdown-item" href="#">Something else here</a>
+                                </div>
+                            </div>
                         </li>
                     </ul>
                 </div>

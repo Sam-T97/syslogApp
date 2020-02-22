@@ -2,30 +2,30 @@
 @model syslogSite.Pages.RegisterDeviceModel
 
 @{
-    ViewData["Title"] = "Register a Device to Monitoring";
+    ViewData["Title"] = "RegisterDevice";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
-<h1>Register a Device to Monitoring</h1>
+<h1>RegisterDevice</h1>
 
-<h4>Fill out the Device Details Below:</h4>
+<h4>Device</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Device.IP" class="control-label"></label>
-                <input asp-for="Device.IP" class="form-control"/>
-                <span asp-validation-for="Device.IP" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="Device.HostName" class="control-label"></label>
                 <input asp-for="Device.HostName" class="form-control" />
                 <span asp-validation-for="Device.HostName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Add This Device" class="btn btn-primary" />
+                <label asp-for="Device.IP" class="control-label"></label>
+                <input asp-for="Device.IP" class="form-control" />
+                <span asp-validation-for="Device.IP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>
@@ -43,7 +43,7 @@
 </div>
 
 <div>
-    <a asp-page="Index">Back to the Home Screen</a>
+    <a asp-page="Index">Back to List</a>
 </div>
 
 @section Scripts {

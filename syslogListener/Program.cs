@@ -64,6 +64,7 @@ namespace syslogListener
                         HostIP = m.RemoteEndPoint.Address.ToString(),
                         Severity = (int)m.Severity,
                         Message = m.Text,
+                        Unread = true,
                         DeviceID = dbContext.Devices.Where(x => x.IP == m.RemoteEndPoint.Address.ToString()).Select(x => x.ID).First()
                     };
                     dbContext.alerts.Add(Alert);

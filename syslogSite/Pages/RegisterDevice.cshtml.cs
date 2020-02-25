@@ -24,6 +24,7 @@ namespace syslogSite.Pages
 
         public IActionResult OnGet()
         {
+            feedback = "";
             return Page();
         }
 

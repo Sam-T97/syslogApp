@@ -41,7 +41,7 @@ namespace syslogSite.Pages
 
         public IActionResult OnGetClearAll(int id)
         {
-            var alert = _context.alerts.Where(i => i.DeviceID == id);
+            var alert = _context.alerts.Where(i => i.DeviceID == id && i.Unread);
             if (!alert.Any()) return RedirectToAction("/DeviceUnreadAlerts"); 
 
             foreach (var item in alert)

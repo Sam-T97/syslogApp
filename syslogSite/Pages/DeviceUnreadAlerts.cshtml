@@ -11,38 +11,46 @@
 <h1>Devices with Unread Alerts:</h1>
 <table class="table">
     <thead>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Device[0].HostName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Device[0].IP)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Device[0].Alerts)
-        </th>
-        <th></th>
-    </tr>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Device[0].HostName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Device[0].IP)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Device[0].Alerts)
+            </th>
+            <th></th>
+        </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model.Device)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.HostName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IP)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Alerts.Count)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.ID">Details</a> |
-                <a asp-page="./Details" asp-route-id="@item.ID">Clear All</a> |
-                <a asp-page="./Delete" asp-route-id="@item.ID">Delete All</a>
-            </td>
-        </tr>
-    }
-        </tbody>
+        @foreach (var item in Model.Device)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.HostName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IP)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Alerts.Count)
+                </td>
+                <td>
+                    <a asp-page="./Edit" asp-route-id="@item.ID">Details</a> |
+                    <a asp-page-handler="ClearAll" asp-route-id="@item.ID">Clear All</a> |
+                    <a asp-page-handler="DeleteAll" asp-route-id="@item.ID"
+                       onclick="return confirm('Deleting alerts is permanent are you sure?')">Delete All</a>
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>
+@if (!Model.Device.Any())
+{
+    <p class="text-center">
+        You have no devices with alerts to be read! <br/>
+        Now that's a healthy network!
+    </p>
+}

@@ -24,7 +24,32 @@ namespace syslogSite.Pages
         public async Task OnGetAsync()
         {
             Device = await _context.Devices.Include(a => a.Alerts)
-                .Where(a => a.Alerts.Count != 0).ToListAsync();
+                .Where(a => a.Alerts.Count != 0 && a.Alerts.Any(b => b.Unread)).ToListAsync();
+        }
+        public IActionResult OnGetDeleteAll(int id)
+        {
+            var alert = _context.alerts.Where(i => i.DeviceID == id);
+            if (!alert.Any()) return RedirectToAction("/DeviceUnreadAlerts");
+
+            foreach (var item in alert)
+            {
+                _context.Remove(alert);
+            }
+            _context.SaveChanges();
+            return RedirectToAction("/DeviceUnreadAlerts");
+        }
+
+        public IActionResult OnGetClearAll(int id)
+        {
+            var alert = _context.alerts.Where(i => i.DeviceID == id);
+            if (!alert.Any()) return RedirectToAction("/DeviceUnreadAlerts"); 
+
+            foreach (var item in alert)
+            {
+                item.Unread = false;
+            }
+            _context.SaveChanges();
+            return RedirectToAction("/UnreadAlerts");
         }
     }
 }

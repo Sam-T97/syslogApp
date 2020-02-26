@@ -1,4 +1,6 @@
 ﻿@page
+@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@using SyslogShared.Models
 @model syslogSite.Pages.DeviceUnreadAlertsModel
 
 @{
@@ -6,25 +8,25 @@
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
-<h1>DeviceUnreadAlerts</h1>
-
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
+<h1>Devices with Unread Alerts:</h1>
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Device[0].HostName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Device[0].IP)
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Device[0].HostName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Device[0].IP)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Device[0].Alerts)
+        </th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Device) {
+    @foreach (var item in Model.Device)
+    {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.HostName)
@@ -33,11 +35,14 @@
                 @Html.DisplayFor(modelItem => item.IP)
             </td>
             <td>
-                <a asp-page="./Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.ID">Delete</a>
+                @Html.DisplayFor(modelItem => item.Alerts.Count)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.ID">Details</a> |
+                <a asp-page="./Details" asp-route-id="@item.ID">Clear All</a> |
+                <a asp-page="./Delete" asp-route-id="@item.ID">Delete All</a>
             </td>
         </tr>
-}
-    </tbody>
+    }
+        </tbody>
 </table>

@@ -23,7 +23,8 @@ namespace syslogSite.Pages
 
         public async Task OnGetAsync()
         {
-            Device = await _context.Devices.ToListAsync();
+            Device = await _context.Devices.Include(a => a.Alerts)
+                .Where(a => a.Alerts.Count != 0).ToListAsync();
         }
     }
 }

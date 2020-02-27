@@ -15,5 +15,10 @@ namespace SyslogShared.Models
         public int Severity { get; set; }
 
         public string Message { get; set; }
+
+        public bool Unread { get; set; }
+
+        public int DeviceID { get; set; }
+        public Device Device { get; set; }
     }
 }

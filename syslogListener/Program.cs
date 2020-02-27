@@ -56,23 +56,27 @@ namespace syslogListener
                 {
                     SyslogMessage m = Queue.Dequeue();
                     var dbContext = GetContext();
+                    
                     var Alert = new Alerts
                     {
                         Facility = (Regex.Match(m.Text,@"(?<=%)(.*?)(?=-)").ToString()),//m.Facility.ToString(),
                         Received = m.Received,
-                        HostIP = m.RemoteEndPoint.ToString(),
+                        HostIP = m.RemoteEndPoint.Address.ToString(),
                         Severity = (int)m.Severity,
-                        Message = m.Text
+                        Message = m.Text,
+                        Unread = true,
+                        DeviceID = dbContext.Devices.Where(x => x.IP == m.RemoteEndPoint.Address.ToString()).Select(x => x.ID).First()
                     };
                     dbContext.alerts.Add(Alert);
                     if (Alert.Severity < 3)
                     {
                         Task.Run(() => EmailAlert(m));
                     }
-                    dbContext.SaveChanges();
+
+                    var saveChanges = dbContext.SaveChanges();
                     Console.WriteLine("Message handled and saved to database");
                 }
-                catch
+                catch (Exception e)
                 {
                     Thread.Sleep(2000);
                 }

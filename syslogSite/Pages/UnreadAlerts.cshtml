@@ -1,0 +1,64 @@
+﻿@page
+@model syslogSite.Pages.UnreadAlertsModel
+
+@{
+    ViewData["Title"] = "UnreadAlerts";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>UnreadAlerts</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+
+</p>
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Alerts[0].Device)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Alerts[0].Facility)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Alerts[0].Received)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Alerts[0].Severity)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Alerts[0].Message)
+        </th>
+        <th></th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Alerts) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Device.HostName)
+        </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Facility)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Received)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Severity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Message)
+            </td>
+        <td style="white-space: nowrap">
+            <a asp-page-handler="Read" asp-route-id="@item.ID">Mark Read</a>
+        </td>
+        <td>
+            <a asp-page-handler="Delete" asp-route-id="@item.ID" onclick="return confirm('Deleting this is permanent are you sure?')"> Delete</a>
+        </td>
+    </tr>
+}
+    </tbody>
+</table>

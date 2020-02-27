@@ -1,0 +1,84 @@
+﻿@page
+@model syslogSite.Pages.SearchAlertsModel
+
+@{
+    ViewData["Title"] = "SearchAlerts";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Search Alerts:</h1>
+<form>
+    <p>
+        
+        Search Term:<input type="text" asp-for="SearchString"/>
+        <input type="submit" value="filter"/>
+    </p>
+</form>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Alerts[0].Device.HostName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Alerts[0].HostIP)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Alerts[0].Facility)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Alerts[0].Received)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Alerts[0].Severity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Alerts[0].Message)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Alerts[0].Unread)
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Alerts)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Device.HostName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.HostIP)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Facility)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Received)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Severity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Message)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Unread)
+                </td>
+                <td>
+                    <a asp-page="./Edit" asp-route-id="@item.ID">Edit</a> |
+                    <a asp-page="./Details" asp-route-id="@item.ID">Details</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.ID">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@if (!Model.Alerts.Any())
+{
+    <p class="text-center">
+        No results have been returned. Try refining your search and try again.  
+    </p>
+}

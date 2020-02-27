@@ -24,12 +24,31 @@
                         </li>
                         <li>
                             <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle bg-dark border-dark" type="button" id="alertsDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Alerts
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="alertsDropDown">
+                                    <a class="dropdown-item" href="/UnreadAlerts">Unread</a>
+                                    <a class="dropdown-item" href="/AllAlerts">All</a>
+                                    <a class="dropdown-item" href="/DeviceUnreadAlerts">Devices with Unread Alerts</a>
+                                    <a class="dropdown-item" href="#">Search Alerts</a>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="dropdown">
                                 <button class="btn btn-secondary dropdown-toggle bg-dark border-dark" type="button" id="devicesDropDownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Device Administration
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="devicesDropDownButton">
                                     <a class="dropdown-item" href="/RegisterDevice">Register Device for Monitoring</a>
-                                    <a class="dropdown-item" href="#">Another action</a>
+                                    <a class="dropdown-item" href="#">Remove Device from System</a>
+                                    <a class="dropdown-item" href="#">Create a new Remote Device</a>
+                                    <a class="dropdown-item" href="#">Remove a Remote Device</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#">View Devices</a>
+                                    <a class="dropdown-item" href="#">View Remote Devices</a>
+                                    <a class="dropdown-item" href="/ConfigRollbackTest">Test Config Rollback</a>
                                     <a class="dropdown-item" href="#">Something else here</a>
                                 </div>
                             </div>
@@ -40,9 +59,8 @@
                                     Reporting
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="reportingDropDown">
-                                    <a class="dropdown-item" href="#">Action</a>
-                                    <a class="dropdown-item" href="#">Another action</a>
-                                    <a class="dropdown-item" href="#">Something else here</a>
+                                    <a class="dropdown-item" href="#">Custom Report</a>
+                                    <a class="dropdown-item" href="#">Pre-made Reports</a>
                                 </div>
                             </div>
                         </li>

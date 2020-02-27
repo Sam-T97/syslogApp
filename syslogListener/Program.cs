@@ -37,6 +37,7 @@ namespace syslogListener
             Thread writeMessage = new Thread(MessageHandler);
             writeMessage.Start();
             writeMessage.Join();
+            Console.WriteLine("Starting the heart beater thread");
             Thread heartBeatThread = new Thread(HeartBeat);
             heartBeatThread.Start();
             heartBeatThread.Join();
@@ -101,6 +102,7 @@ namespace syslogListener
             {
                 try
                 {
+                    Console.WriteLine("Starting heartbeat checks");
                     List<Device> devices = new List<Device>();
                     foreach (Device d in dbContext.Devices)
                     {
@@ -114,7 +116,7 @@ namespace syslogListener
                     {
                         Task.Run(() => EmailAlert(null, devices));
                     }
-
+                    Console.WriteLine("Heartbeats concluded sleeping for interval");
                     Thread.Sleep((int)TimeSpan.FromMinutes(interval).TotalMilliseconds);
                 }
                 catch(Exception e)

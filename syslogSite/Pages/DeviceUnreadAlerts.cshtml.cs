@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +14,6 @@ namespace syslogSite.Pages
     public class DeviceUnreadAlertsModel : PageModel
     {
         private readonly SyslogShared.ApplicationDbContext _context;
-
         public DeviceUnreadAlertsModel(SyslogShared.ApplicationDbContext context)
         {
             _context = context;
@@ -24,7 +24,8 @@ namespace syslogSite.Pages
         public async Task OnGetAsync()
         {
             Device = await _context.Devices.Include(a => a.Alerts)
-                .Where(a => a.Alerts.Count != 0 && a.Alerts.Any(b => b.Unread)).ToListAsync();
+                .Where(a => a.Alerts.Count != 0).ToListAsync();
+            
         }
         public IActionResult OnGetDeleteAll(int id)
         {
@@ -49,7 +50,7 @@ namespace syslogSite.Pages
                 item.Unread = false;
             }
             _context.SaveChanges();
-            return RedirectToAction("/UnreadAlerts");
+            return RedirectToAction("/DeviceUnreadAlerts");
         }
     }
 }

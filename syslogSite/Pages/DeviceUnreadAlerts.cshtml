@@ -38,7 +38,7 @@
                     @Html.DisplayFor(modelItem => item.Alerts.Count)
                 </td>
                 <td>
-                    <a asp-page="./Edit" asp-route-id="@item.ID">Details</a> |
+                    <a asp-page="/UnreadAlertsDeviceFiltered" asp-route-id="@item.ID" asp-route-host="@item.HostName">Details</a> |
                     <a asp-page-handler="ClearAll" asp-route-id="@item.ID">Clear All</a> |
                     <a asp-page-handler="DeleteAll" asp-route-id="@item.ID"
                        onclick="return confirm('Deleting alerts is permanent are you sure?')">Delete All</a>

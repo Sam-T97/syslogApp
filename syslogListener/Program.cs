@@ -36,11 +36,10 @@ namespace syslogListener
             Console.WriteLine("Starting syslog listener");
             Thread writeMessage = new Thread(MessageHandler);
             writeMessage.Start();
-            writeMessage.Join();
             Console.WriteLine("Starting the heart beater thread");
             Thread heartBeatThread = new Thread(HeartBeat);
             heartBeatThread.Start();
-            heartBeatThread.Join();
+            writeMessage.Join();
         }
 
         private static void Server_MessageReceived(object sender, MessageReceivedEventArgs e)
@@ -98,6 +97,7 @@ namespace syslogListener
             int.TryParse(dbContext.appvars.Where(a => a.VariableName == "HBInterval")
                 .Select(a => a.Value)
                 .FirstOrDefault(),out interval);
+            if (interval == 0) interval = 10;
             while (true)
             {
                 try
@@ -145,7 +145,7 @@ namespace syslogListener
                 StringBuilder hostnamesBuilder = new StringBuilder();
                 foreach (Device d in device)
                 {
-                    hostnamesBuilder.AppendLine(d.HostName);
+                    hostnamesBuilder.AppendLine(d.HostName + "<br/>");
                 }
                 message.To.Add(""); //TODO get emails from db
                 message.From = new MailAddress("syslogsnapper@gmail.com", "SyslogSnapper");
@@ -159,10 +159,11 @@ namespace syslogListener
                 using var client = new SmtpClient()
                 {
                     Host = "smtp.gmail.com",
+                    TargetName = "STARTTLS/smtp.gmail.com",
                     Port = 587,
-                    EnableSsl = true,
                     UseDefaultCredentials = false,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
+                    EnableSsl = true,
                     Credentials = new NetworkCredential("syslogsnapper@gmail.com", gmailPassword)//TODO password here
                 };
                 client.Send(message);

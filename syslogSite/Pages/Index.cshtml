@@ -1,60 +1,65 @@
 ﻿@page
 @model IndexModel
+@inject SignInManager<IdentityUser> IdentityManager
+@inject  UserManager<IdentityUser>  UserManager
 @{
     ViewData["Title"] = "Home page";
 }
-<style>
-    .grid-container {
-        display: grid;
-        grid-template-columns: 50% 50%;
-        padding: 10px;
-    }
+@if (IdentityManager.IsSignedIn(User))
+{
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: 50% 50%;
+            padding: 10px;
+        }
 
-    .grid-item {
-        border: 1px solid rgba(0, 0, 0, 0.8);
-        padding: 0px;
-        font-size: 20px;
-        text-align: center;
-    }
-</style>
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <h2>Here is a current breakdown of the network situation:</h2>
-</div>
-<div class="grid-container">
-    <div class="grid-item">
-        <h4>Alerts by Type:</h4>
-        <text id="0"></text><br />
-        <text id="1"></text><br />
-        <text id="2"></text><br />
-        <text id="3"></text><br />
-        <text id="4"></text><br />
-        <text id="5"></text><br />
-        <text id="6"></text><br />
-        <text id="7"></text><br />
-        <b><text id="8"></text></b>
+        .grid-item {
+            border: 1px solid rgba(0, 0, 0, 0.8);
+            padding: 0px;
+            font-size: 20px;
+            text-align: center;
+        }
+    </style>
+    <div class="text-center">
+        <h1 class="display-4">Welcome</h1>
+        <h2>Here is a current breakdown of the network situation:</h2>
     </div>
-    <!--Chart form of the above data-->
-    <div class="grid-item"><h4>Syslog Messages by Type:</h4><canvas id="messageType"></canvas></div>
-    <!--Line graph of messages inbound over a user defined interval-->
-    <div class="grid-item"><h4>Inbound Message Rate:</h4>
-        <label>Select interval:</label>&nbsp;<select id="interval" onchange="updateRateInterval()">
-            <option>Past Hour</option>
-            <option>Past Day</option>
-            <option>Past 7 Days</option>
-            <option>Past 30 Days</option>
-        </select>
-        <canvas id="messageTime"></canvas>
+    <div class="grid-container">
+        <div class="grid-item">
+            <h4>Alerts by Type:</h4>
+            <text id="0"></text><br/>
+            <text id="1"></text><br/>
+            <text id="2"></text><br/>
+            <text id="3"></text><br/>
+            <text id="4"></text><br/>
+            <text id="5"></text><br/>
+            <text id="6"></text><br/>
+            <text id="7"></text><br/>
+            <b><text id="8"></text></b>
         </div>
-    <div class="grid-item">
-        <h4 id="troubleHeader"></h4>
-        <text id="trouble0" style="font-size: x-large"></text><br /><br/>
-        <text id="trouble1" style="font-size: x-large"></text><br /><br/>
-        <text id="trouble2" style="font-size: x-large"></text><br /><br/>
-        <text id="trouble3" style="font-size: x-large"></text><br /><br/>
-        <text id="trouble4" style="font-size: x-large"></text>
+        <!--Chart form of the above data-->
+        <div class="grid-item"><h4>Syslog Messages by Type:</h4><canvas id="messageType"></canvas></div>
+        <!--Line graph of messages inbound over a user defined interval-->
+        <div class="grid-item"><h4>Inbound Message Rate:</h4>
+            <label>Select interval:</label>&nbsp;
+            <select id="interval" onchange="updateRateInterval()">
+                <option>Past Hour</option>
+                <option>Past Day</option>
+                <option>Past 7 Days</option>
+                <option>Past 30 Days</option>
+            </select>
+            <canvas id="messageTime"></canvas>
+        </div>
+        <div class="grid-item">
+            <h4 id="troubleHeader"></h4>
+            <text id="trouble0" style="font-size: x-large"></text><br/><br/>
+            <text id="trouble1" style="font-size: x-large"></text><br/><br/>
+            <text id="trouble2" style="font-size: x-large"></text><br/><br/>
+            <text id="trouble3" style="font-size: x-large"></text><br/><br/>
+            <text id="trouble4" style="font-size: x-large"></text>
+        </div>
     </div>
-</div>
 @section Scripts{
     <!-- set chartJS script -> source: https://www.chartjs.org/ used under MIT license-->
     <script src="js/Chart.js"></script>
@@ -194,16 +199,23 @@
                             type: "line",
                             data: {
                                 labels: labels,
-                                datasets: [{
-                                    label: "Rate by min, hour, day. Only intervals with data will be shown",
-                                    data: values,
-                                    fill: false,
-                                    borderColor: "rgb(75, 192, 192)"
-                                }]
+                                datasets: [
+                                    {
+                                        label: "Rate by min, hour, day. Only intervals with data will be shown",
+                                        data: values,
+                                        fill: false,
+                                        borderColor: "rgb(75, 192, 192)"
+                                    }
+                                ]
                             }
                         });
                 }
             });
         }
     </script>
+}
+}
+else
+{
+    Response.Redirect("/Identity/Account/Login");
 }

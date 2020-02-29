@@ -1,0 +1,42 @@
+﻿@page
+@model syslogSite.Pages.RemoveDeviceModel
+
+@{
+    ViewData["Title"] = "RemoveDevice";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Remove Device from Monitoring</h1>
+
+<div>
+    <h4>Device Search</h4>
+    <hr />
+    @RemoveDeviceModel.feedback
+    Find the device by entering it's details here:
+    <form method="get" asp-page-handler="LocateAsync">
+        <label asp-for="Device.IP"></label><br/>
+        <input type="text" asp-for="Device.IP" /><br />
+        <label>Hostname</label><br />
+        <input type="text" asp-for="Device.HostName" />
+        <input type="submit" value="Get Device" />
+    </form>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Device.HostName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Device.HostName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Device.IP)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Device.IP)
+        </dd>
+    </dl>
+    <form method="post">
+        <input type="hidden" asp-for="Device.ID" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-page="./Index">Back to List</a>
+    </form>
+</div>

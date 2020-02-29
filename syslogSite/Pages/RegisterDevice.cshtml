@@ -1,52 +1,66 @@
 ﻿@page
 @model syslogSite.Pages.RegisterDeviceModel
-
+@inject SignInManager<IdentityUser> IdentityManager
+@inject UserManager<IdentityUser>  UserManager
 @{
     ViewData["Title"] = "RegisterDevice";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
+@if (IdentityManager.IsSignedIn(User) && User.IsInRole("Admin") || User.IsInRole("Engineer"))
+{
+    <h1>Register Device for Monitoring</h1>
 
-<h1>Register Device for Monitoring</h1>
-
-<h4>Device Details:</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <span class="text-danger">@RegisterDeviceModel.feedback</span>
-        <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label class="control-label">Hostname</label>
-                <input asp-for="Device.HostName" class="form-control"/>
-                <span asp-validation-for="Device.HostName" class="text-danger"></span>
+    <h4>Device Details:</h4>
+    <hr/>
+    <div class="row">
+        <div class="col-md-4">
+            <span class="text-danger">@RegisterDeviceModel.feedback</span>
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label class="control-label">Hostname</label>
+                    <input asp-for="Device.HostName" class="form-control"/>
+                    <span asp-validation-for="Device.HostName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Device.IP" class="control-label"></label>
+                    <input asp-for="Device.IP" class="form-control"/>
+                    <span asp-validation-for="Device.IP" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary"/>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6 col-md-offset-2">
+            <div>
+                <p>
+                    <br/>
+                    The IP address for your system will be the internal address it is using to communicate with the monitoring system.
+                    <br/>
+                    <br/>
+                    Unsure what the hostname is? Enter the IP address and select detect hostname, I will try to automatically find it for you.
+                </p>
             </div>
-            <div class="form-group">
-                <label asp-for="Device.IP" class="control-label"></label>
-                <input asp-for="Device.IP" class="form-control"/>
-                <span asp-validation-for="Device.IP" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary"/>
-            </div>
-        </form>
-    </div>
-    <div class="col-md-6 col-md-offset-2">
-        <div>
-            <p>
-                <br/>
-                The IP address for your system will be the internal address it is using to communicate with the monitoring system.
-                <br/>
-                <br/>
-                Unsure what the hostname is? Enter the IP address and select detect hostname, I will try to automatically find it for you.
-            </p>
         </div>
     </div>
-</div>
 
-<div>
-    <a asp-page="Index">Back to Home</a>
-</div>
+    <div>
+        <a asp-page="Index">Back to Home</a>
+    </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }
+        }
+        else
+        {
+            if (User.IsInRole("Standard"))
+            {
+                Response.Redirect("/Identity/Account/AccessDenied");
+            }
+            else
+            {
+                Response.Redirect("/Identity/Account/Login");
+            }
+        }

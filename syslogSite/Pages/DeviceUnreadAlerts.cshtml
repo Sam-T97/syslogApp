@@ -2,15 +2,17 @@
 @using Microsoft.EntityFrameworkCore.Metadata.Internal
 @using SyslogShared.Models
 @model syslogSite.Pages.DeviceUnreadAlertsModel
-
+@inject SignInManager<IdentityUser> IdentityManager
+@inject UserManager<IdentityUser>  UserManager
 @{
     ViewData["Title"] = "DeviceUnreadAlerts";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
-
-<h1>Devices with Unread Alerts:</h1>
-<table class="table">
-    <thead>
+@if (IdentityManager.IsSignedIn(User) && User.IsInRole("Admin") || User.IsInRole("Engineer"))
+{
+    <h1>Devices with Unread Alerts:</h1>
+    <table class="table">
+        <thead>
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Device[0].HostName)
@@ -23,8 +25,8 @@
             </th>
             <th></th>
         </tr>
-    </thead>
-    <tbody>
+        </thead>
+        <tbody>
         @foreach (var item in Model.Device)
         {
             <tr>
@@ -45,12 +47,24 @@
                 </td>
             </tr>
         }
-    </tbody>
-</table>
+        </tbody>
+    </table>
 @if (!Model.Device.Any())
 {
     <p class="text-center">
         You have no devices with alerts to be read! <br/>
         Now that's a healthy network!
     </p>
+}
+}
+else
+{
+    if (User.IsInRole("Standard"))
+    {
+        Response.Redirect("Identity/Account/AccessDenied");
+    }
+    else
+    {
+        Response.Redirect("/Identity/Account/Login");
+    }
 }

@@ -1,21 +1,23 @@
 ﻿@page
 @model syslogSite.Pages.SearchAlertsModel
-
+@inject SignInManager<IdentityUser> IdentityManager
+@inject UserManager<IdentityUser>  UserManager
 @{
     ViewData["Title"] = "SearchAlerts";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
+@if (IdentityManager.IsSignedIn(User) && User.IsInRole("Admin") || User.IsInRole("Engineer"))
+{
+    <h1>Search Alerts:</h1>
+    <form>
+        <p>
 
-<h1>Search Alerts:</h1>
-<form>
-    <p>
-        
-        Search Term:<input type="text" asp-for="SearchString"/>
-        <input type="submit" value="filter"/>
-    </p>
-</form>
-<table class="table">
-    <thead>
+            Search Term:<input type="text" asp-for="SearchString"/>
+            <input type="submit" value="filter"/>
+        </p>
+    </form>
+    <table class="table">
+        <thead>
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Alerts[0].Device.HostName)
@@ -41,8 +43,8 @@
 
             <th></th>
         </tr>
-    </thead>
-    <tbody>
+        </thead>
+        <tbody>
         @foreach (var item in Model.Alerts)
         {
             <tr>
@@ -74,11 +76,23 @@
                 </td>
             </tr>
         }
-    </tbody>
-</table>
+        </tbody>
+    </table>
 @if (!Model.Alerts.Any())
 {
     <p class="text-center">
-        No results have been returned. Try refining your search and try again.  
+        No results have been returned. Try refining your search and try again.
     </p>
+}
+}
+else
+{
+    if (User.IsInRole("Standard"))
+    {
+        Response.Redirect("/Identity/Account/AccessDenied");
+    }
+    else
+    {
+        Response.Redirect("/Identity/Account/Login");
+    }
 }

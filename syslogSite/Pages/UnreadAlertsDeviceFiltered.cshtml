@@ -1,17 +1,19 @@
 ﻿@page
 @model syslogSite.Pages.UnreadAlertsDeviceFilteredModel
-
+@inject SignInManager<IdentityUser> IdentityManager
+@inject UserManager<IdentityUser>  UserManager
 @{
     ViewData["Title"] = "UnreadAlertsDeviceFiltered";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
+@if (IdentityManager.IsSignedIn(User) && User.IsInRole("Admin") || User.IsInRole("Engineer"))
+{
+    <h1>Alerts for @UnreadAlertsDeviceFilteredModel.Hostname:</h1>
 
-<h1>Alerts for @UnreadAlertsDeviceFilteredModel.Hostname:</h1>
-
-<p>
-</p>
-<table class="table">
-    <thead>
+    <p>
+    </p>
+    <table class="table">
+        <thead>
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Alerts[0].Facility)
@@ -27,27 +29,40 @@
             </th>
             <th>Options</th>
         </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Alerts) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Facility)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Received)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Severity)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Message)
-            </td>
-            <td>
-                <a asp-page-handler="Read" asp-route-id="@item.ID" asp-route-host="@UnreadAlertsDeviceFilteredModel.Hostname">Mark Read</a> |
-                <a asp-page-handler="Delete" asp-route-id="@item.ID" onclick="return confirm('Deleting this is permanent are you sure?')"> Delete</a>
-            </td>
-        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.Alerts)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Facility)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Received)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Severity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Message)
+                </td>
+                <td>
+                    <a asp-page-handler="Read" asp-route-id="@item.ID" asp-route-host="@UnreadAlertsDeviceFilteredModel.Hostname">Mark Read</a> |
+                    <a asp-page-handler="Delete" asp-route-id="@item.ID" onclick="return confirm('Deleting this is permanent are you sure?')"> Delete</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
 }
-    </tbody>
-</table>
+else
+{
+    if (User.IsInRole("Standard"))
+    {
+        Response.Redirect("/Identity/Account/AccessDenied");
+    }
+    else
+    {
+        Response.Redirect("/Identity/Account/Login");
+    }
+}

@@ -110,6 +110,26 @@ namespace syslogSite
                     newUserRole.Wait();
                 }
             }
+
+            testUser = userManager.FindByEmailAsync("standardtest@test.com");
+            testUser.Wait();
+            if (testUser.Result == null)
+            {
+                IdentityUser standard = new IdentityUser
+                {
+                    Email = "standardtest@test.com",
+                    UserName = "standardtest@test.com",
+                    EmailConfirmed = true,
+                    NormalizedUserName = "STANDARDTEST@TEST.COM"
+                };
+                Task<IdentityResult> newUser = userManager.CreateAsync(standard, "Password1.");
+                newUser.Wait();
+                if (newUser.Result.Succeeded)
+                {
+                    Task<IdentityResult> newUserRole = userManager.AddToRoleAsync(standard, "Standard");
+                    newUserRole.Wait();
+                }
+            }
         }
     }
 }

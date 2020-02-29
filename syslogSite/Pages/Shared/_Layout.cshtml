@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -11,7 +14,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index"><img src="/Assets/icon.png" style="width: 100px;"/> Syslog Snapper</a>
+                <a class="navbar-brand" asp-area="" asp-page="/Index"><img src="/Assets/icon.png" style="width: 100px;" /> Syslog Snapper</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -22,48 +25,56 @@
                         <li class="nav-item">
                             <a class="nav-link text-light" asp-area="" asp-page="/Index">Home</a>
                         </li>
-                        <li>
-                            <div class="dropdown">
-                                <button class="btn btn-secondary dropdown-toggle bg-dark border-dark" type="button" id="alertsDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Alerts
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="alertsDropDown">
-                                    <a class="dropdown-item" href="/UnreadAlerts">Unread</a>
-                                    <a class="dropdown-item" href="/AllAlerts">All</a>
-                                    <a class="dropdown-item" href="/DeviceUnreadAlerts">Devices with Unread Alerts</a>
-                                    <a class="dropdown-item" href="#">Search Alerts</a>
+                        @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin") || User.IsInRole("Engineer"))
+                        {
+                            <li>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle bg-dark border-dark" type="button" id="alertsDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Alerts
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="alertsDropDown">
+                                        <a class="dropdown-item" href="/UnreadAlerts">Unread</a>
+                                        <a class="dropdown-item" href="/AllAlerts">All</a>
+                                        <a class="dropdown-item" href="/DeviceUnreadAlerts">Devices with Unread Alerts</a>
+                                        <a class="dropdown-item" href="#">Search Alerts</a>
+                                    </div>
                                 </div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="dropdown">
-                                <button class="btn btn-secondary dropdown-toggle bg-dark border-dark" type="button" id="devicesDropDownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Device Administration
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="devicesDropDownButton">
-                                    <a class="dropdown-item" href="/RegisterDevice">Register Device for Monitoring</a>
-                                    <a class="dropdown-item" href="#">Remove Device from System</a>
-                                    <a class="dropdown-item" href="#">Create a new Remote Device</a>
-                                    <a class="dropdown-item" href="#">Remove a Remote Device</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#">View Devices</a>
-                                    <a class="dropdown-item" href="#">View Remote Devices</a>
-                                    <a class="dropdown-item" href="/ConfigRollbackTest">Test Config Rollback</a>
-                                    <a class="dropdown-item" href="#">Something else here</a>
+                            </li>
+
+                            <li>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle bg-dark border-dark" type="button" id="devicesDropDownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Device Administration
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="devicesDropDownButton">
+                                        <a class="dropdown-item" href="/RegisterDevice">Register Device for Monitoring</a>
+                                        <a class="dropdown-item" href="#">Remove Device from System</a>
+                                        <a class="dropdown-item" href="#">Create a new Remote Device</a>
+                                        <a class="dropdown-item" href="#">Remove a Remote Device</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="#">View Devices</a>
+                                        <a class="dropdown-item" href="#">View Remote Devices</a>
+                                        <a class="dropdown-item" href="/ConfigRollbackTest">Test Config Rollback</a>
+                                        <a class="dropdown-item" href="#">Something else here</a>
+                                    </div>
                                 </div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="dropdown">
-                                <button class="btn btn-secondary dropdown-toggle bg-dark border-dark" type="button" id="reportingDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Reporting
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="reportingDropDown">
-                                    <a class="dropdown-item" href="#">Custom Report</a>
-                                    <a class="dropdown-item" href="#">Pre-made Reports</a>
+                            </li>
+                        }
+
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <li>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle bg-dark border-dark" type="button" id="reportingDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Reporting
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="reportingDropDown">
+                                        <a class="dropdown-item" href="#">Custom Report</a>
+                                        <a class="dropdown-item" href="#">Pre-made Reports</a>
+                                    </div>
                                 </div>
-                            </div>
-                        </li>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
@@ -74,12 +85,12 @@
             @RenderBody()
         </main>
     </div>
-<footer class="border-top footer text-muted">
-    <div class="container">
-        &copy; 2019 - Syslog Snapper - <a asp-area="" asp-page="/Privacy">Privacy</a>
-    </div>
-</footer>
- 
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2019 - Syslog Snapper - <a asp-area="" asp-page="/Privacy">Privacy</a>
+        </div>
+    </footer>
+
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

@@ -47,19 +47,19 @@
         <canvas id="messageTime"></canvas>
         </div>
     <div class="grid-item">
-        <h4>Top 5 Most Troublesome Systems:</h4>
-        <text id="trouble0"></text><br />
-        <text id="trouble1"></text><br />
-        <text id="trouble2"></text><br />
-        <text id="trouble3"></text><br />
-        <text id="trouble4"></text>
+        <h4 id="troubleHeader"></h4>
+        <text id="trouble0" style="font-size: x-large"></text><br /><br/>
+        <text id="trouble1" style="font-size: x-large"></text><br /><br/>
+        <text id="trouble2" style="font-size: x-large"></text><br /><br/>
+        <text id="trouble3" style="font-size: x-large"></text><br /><br/>
+        <text id="trouble4" style="font-size: x-large"></text>
     </div>
 </div>
 @section Scripts{
     <!-- set chartJS script -> source: https://www.chartjs.org/ used under MIT license-->
     <script src="js/Chart.js"></script>
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             //collect first set of metrics and update them every 10 seconds
             updateMetrics();
             window.setInterval(updateMetrics, 10000);
@@ -75,7 +75,7 @@
                     data: {},
                     contentType: "application/json",
                     dataType: "json",
-                    success: function (data) {
+                    success: function(data) {
                         //parse out the JSON to a JS array
                         var dataObj = JSON.parse(data);
                         var numbers = []; //prepared to collect data from each JSON key
@@ -91,10 +91,16 @@
                         ];
 
                         for (var i = 0; i < 8; i++) {
-                            document.getElementById(i).innerText = errorNames[i] + ": "
-                                + dataObj[errorNames[i]]; //place the metric in each area of section 1
-                            document.getElementById(i).setAttribute("title", errorDescriptors[i]); //set the tooltip value to the error description 
-                            numbers.push(parseInt(dataObj[errorNames[i]])); //append metric to the array for the graph function later
+                            document.getElementById(i).innerText =
+                                errorNames[i] +
+                                ": " +
+                                dataObj[errorNames[i]]; //place the metric in each area of section 1
+                            document.getElementById(i)
+                                .setAttribute("title",
+                                    errorDescriptors[i]); //set the tooltip value to the error description 
+                            numbers.push(
+                                parseInt(
+                                    dataObj[errorNames[i]])); //append metric to the array for the graph function later
                         }
                         document.getElementById("8").innerText = errorNames[8] + ": " + dataObj[errorNames[8]];
                         //remove total from each array before making the graph
@@ -146,10 +152,58 @@
                             });
                     }
                 });
+            //Begin Data collection for top 5 systems
+            $.ajax({
+                type: "GET",
+                url: "/Index?handler=TroubleSystems",
+                data: {},
+                contentType: "application/json",
+                dataType: "json",
+                success: function(data) {
+                    var hosts = data.hostnames;
+                    document.getElementById("troubleHeader").innerText =
+                        "Top " + hosts.length + " most troublesome systems:";
+                    for (var i = 0; i < hosts.length; i++) {
+                        document.getElementById("trouble" + i).innerText = hosts[i];
+                    }
+                }
+            });
+            //Call Line Graph Update Method by calling the action associated with the resolution selection dropdown
+            updateRateInterval();
         }
+
         function updateRateInterval() {
-            alert(document.getElementById("interval").selectedIndex);
-            
+            $.ajax({
+                type: "GET",
+                url: "/Index?handler=InboundData",
+                data: { "time": (document.getElementById("interval").selectedIndex) },
+                contentType: "application/json",
+                dataType: "json",
+                success: function(data) {
+                    console.log(data);
+                    var labels = [];
+                    var values = [];
+                    $.each(data,
+                        function(index) {
+                            labels.push(data[index].day);
+                            values.push(data[index].rate);
+                        });
+                    var ctx = document.getElementById('messageTime');
+                    var messageTime = new Chart(ctx,
+                        {
+                            type: "line",
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: "Rate by min, hour, day. Only intervals with data will be shown",
+                                    data: values,
+                                    fill: false,
+                                    borderColor: "rgb(75, 192, 192)"
+                                }]
+                            }
+                        });
+                }
+            });
         }
     </script>
 }

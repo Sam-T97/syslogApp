@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Data;
 using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -43,6 +45,70 @@ namespace syslogSite.Pages
             }
             counts.Add("Total", _context.alerts.Count().ToString());
             return new JsonResult(JsonConvert.SerializeObject(counts));
+        }
+
+        public  JsonResult OnGetTroubleSystems()
+        {
+            List<string> devices = _context.Devices.Include(a => a.Alerts)
+                .OrderByDescending(d => d.Alerts.Count)
+                .Select(d => d.HostName)
+                .Take(5).ToList();
+            return new JsonResult(new {hostnames = devices});
+        }
+
+        public JsonResult OnGetInboundData(int time)
+        {
+            DateTime startDateTime;
+            var result = (dynamic) null;
+            switch (time)
+            {
+                case 0:
+                    startDateTime = DateTime.Now - TimeSpan.FromHours(1);
+                    result = _context.alerts
+                        .Where(a => a.Received >= startDateTime && a.Received <= DateTime.Now)
+                        .GroupBy(a => a.Received.Minute)
+                        .Select(x => new
+                        {
+                            day = x.Key,
+                            rate = x.Count()
+                        });
+                    break;
+                case 1:
+                    startDateTime = DateTime.Now - TimeSpan.FromDays(1);
+                    result = _context.alerts
+                        .Where(a => a.Received >= startDateTime && a.Received <= DateTime.Now)
+                        .GroupBy(a => a.Received.Day)
+                        .Select(x => new
+                        {
+                            day = x.Key,
+                            rate = x.Count()
+                        });
+                    break;
+                case 2:
+                    startDateTime = DateTime.Now - TimeSpan.FromDays(7);
+                    result = _context.alerts
+                        .Where(a => a.Received >= startDateTime && a.Received <= DateTime.Now)
+                        .GroupBy(a => a.Received.Day)
+                        .Select(x => new
+                        {
+                            day = x.Key,
+                            rate = x.Count()
+                        });
+                    break;
+                case 3:
+                    startDateTime = DateTime.Now - TimeSpan.FromDays(30);
+                    result = _context.alerts
+                            .Where(a => a.Received >= startDateTime && a.Received <= DateTime.Now)
+                            .GroupBy(a => a.Received.Day)
+                            .Select(x => new
+                            {
+                                day = x.Key,
+                                rate = x.Count()
+                            });
+                    break;
+            }
+
+            return new JsonResult(result);
         }
         public static ApplicationDbContext GetContext()
         {

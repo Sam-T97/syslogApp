@@ -32,9 +32,18 @@
             </dd>
         </dl>
     </div>
-        <div id="Config" class="tab-pane fade">
-            Config content here
+    <div id="Config" class="tab-pane fade">
+        <h4>Backup Config Viewer</h4>
+        <select id="BackupSelect" style="visibility: hidden"></select>
+        <div id="BackupConfig" style="overflow-y: scroll; min-height: 0; max-height: 400px;">
+            <text id="BackupConfigText"></text>
         </div>
+        <hr />
+        <h4>Running Config Viewer</h4>
+        <div id="RunningConfig" style="overflow-y: scroll; height: 400px; min-height: 0;">
+            <text id="RunningConfigText"></text>
+        </div>
+    </div>
         <div id="Terminal" class="tab-pane fade">
             Terminal Content here
         </div>
@@ -47,14 +56,50 @@
 @section Scripts
 {
     <script>
-        function open(evt, tab) {
-            var content, links;
-            content = document.getElementsByClassName("tab-content");
-            links = document.getElementsByClassName("tablinks");
-            content.forEach(element => element.style.display = "none");
-            links.forEach(element => element.className = element.className.replace(" active", ""));
-            document.getElementById(tab).style.display = "block";
-            evt.currentTarget.className += " active";
-        }
+        $(document).ready(function() {
+            $.ajax(
+                {
+                    type: "GET",
+                    url: "/DeviceDetails?handler=BackupConfigs",
+                    data: {},
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function(data) {
+                        console.log(data);
+                        try {
+                            data.pop();
+                        } catch (err) {
+                            //ignored the array may only have 1 element so pop isn't possible
+                            //continue execution a result must have been returned otherwise the error function would have triggered
+                        }
+                        var dropdown = document.getElementById("BackupSelect");
+                        for (var i = 0; i < data.length; i++) {
+                            var opt = document.createElement('option');
+                            opt.appendChild(document.createTextNode(data[i].toString()));
+                            opt.value = data[i].toString();
+                            dropdown.appendChild(opt);
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.log("A 404 was returned");
+                        document.getElementById("BackupConfigText").innerText =
+                            "Something went wrong trying to collect the backup config file names \n" +
+                            "Check the remote device is live by looking at its details and try again";
+                    }
+                });
+            $.ajax(
+                {
+                    type: "GET",
+                    url: "/DeviceDetails?handler=RunningConfig",
+                    data: {},
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function(data) {
+                        console.log(data);
+                        var configArea = document.getElementById("RunningConfigText");
+                        configArea.innerText = data;
+                    }
+                });
+        });
     </script>
 }

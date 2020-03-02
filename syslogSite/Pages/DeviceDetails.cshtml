@@ -1,0 +1,60 @@
+﻿@page
+@model syslogSite.Pages.DeviceDetailsModel
+
+@{
+    ViewData["Title"] = "DeviceDetails";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+<h1>Device Details</h1>
+<div>
+    <h4>@Html.DisplayFor(model => model.Device.HostName)</h4>
+    <hr />
+    <ul class="nav justify-content-center">
+        <li class="nav-item active"><a data-toggle="tab" class="nav-link text-dark" href="#Details">Details</a></li>
+        <li class="nav-item"><a data-toggle="tab" class="nav-link text-dark" href="#Config">Configuration</a></li>
+        <li class="nav-item"><a data-toggle="tab" class="nav-link text-dark" href="#Terminal">Terminal</a></li>
+    </ul>
+    <hr/>
+    <div class="tab-content">
+    <div id="Details" class="tab-pane active">
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Device.HostName)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Device.HostName)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Device.IP)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Device.IP)
+            </dd>
+        </dl>
+    </div>
+        <div id="Config" class="tab-pane fade">
+            Config content here
+        </div>
+        <div id="Terminal" class="tab-pane fade">
+            Terminal Content here
+        </div>
+    </div>
+</div>
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.Device.ID">Edit</a> |
+    <a asp-page="./ListDevices">Back to List</a>
+</div>
+@section Scripts
+{
+    <script>
+        function open(evt, tab) {
+            var content, links;
+            content = document.getElementsByClassName("tab-content");
+            links = document.getElementsByClassName("tablinks");
+            content.forEach(element => element.style.display = "none");
+            links.forEach(element => element.className = element.className.replace(" active", ""));
+            document.getElementById(tab).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+    </script>
+}

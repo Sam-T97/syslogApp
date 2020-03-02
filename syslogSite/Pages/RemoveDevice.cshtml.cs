@@ -12,7 +12,7 @@ namespace syslogSite.Pages
 {
     public class RemoveDeviceModel : PageModel
     {
-        public static string feedback;
+        public static string feedback = "";
         private readonly SyslogShared.ApplicationDbContext _context;
 
         public RemoveDeviceModel(SyslogShared.ApplicationDbContext context)
@@ -25,6 +25,7 @@ namespace syslogSite.Pages
 
         public async Task<IActionResult> OnGetAsync(int? id, string host)
         {
+            feedback = "";
             if (id == null && host == null)
             {
                 return Page();

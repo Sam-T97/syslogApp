@@ -11,16 +11,24 @@
 <div>
     <h4>Device Search</h4>
     <hr />
-    @RemoveDeviceModel.feedback<br/>
-    Find the device by entering it's details here:
-    <form method="post" asp-page-handler="Locate">
-        <label asp-for="Device.IP"></label><br/>
-        <input type="text" name="ip"/><br />
-        <label>Hostname</label><br />
-        <input type="text" name="hostname" />
-        <input type="submit" value="Get Device" />
-    </form>
-    @if (Model.Device != null)
+    <text class="text-danger">@RemoveDeviceModel.feedback</text><br/>
+    @if(Model.Device == null) {
+        <text>Find the device by entering it's details here:</text>
+        <form method="post" asp-page-handler="Locate">
+    
+            <label asp-for="Device.IP"></label><br/>
+    
+            <input type="text" name="ip"/><br />
+    
+            <label>Hostname</label><br />
+    
+            <input type="text" name="hostname" />
+    
+            <input type="submit" value="Get Device" />
+    
+        </form>
+    }
+    else
     {
         <br/>
         <text>Deletion is permanent. Make sure this is the device you want to remove</text>

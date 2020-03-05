@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SyslogShared;
 using SyslogShared.Models;
 using Renci.SshNet;
@@ -38,11 +39,21 @@ namespace syslogSite.Pages
             return Page();
         }
 
-        public ActionResult OnGetBackupConfigs()
+        public ActionResult OnGetBackupConfigs(int id)
         {
             try
             {
-                SshClient client = new SshClient("TestPI", "pi", "test");
+                string remoteIP;
+                try
+                {
+                    remoteIP = _context.RemoteDevices.Where(i => i.DeviceID == id).Select(i => i.IP).First();
+                }
+                catch (Exception e)
+                {
+                    string[] error = {"No remote device configured"};
+                    return new JsonResult(error);
+                }
+                SshClient client = new SshClient(remoteIP, "pi", "test");
                 client.Connect();
                 SshCommand cmd = client.CreateCommand("./ListConfigs.py");
                 cmd.Execute();
@@ -53,21 +64,45 @@ namespace syslogSite.Pages
             }
             catch(Exception e)
             {
+                //Return failure if we can't connect to the PI
                 return NotFound();
             }
         }
-        public JsonResult OnGetRunningConfig()
+        public JsonResult OnGetRunningConfig(int id)
         {
+            //try to grab the running config from the device
             try
             {
-                SshClient client = new SshClient("10.0.10.1", "test", "test");
+                string ip = _context.Devices.Where(i => i.ID == id).Select(i => i.IP).First();
+                SshClient client = new SshClient(ip, "test", "test");
                 client.Connect();
-                SshCommand cmd = client.CreateCommand("sh run");
+                SshCommand cmd = client.CreateCommand("show running-config");
                 cmd.Execute();
                 string config = cmd.Result;
                 client.Disconnect();
                 client.Dispose();
                 return new JsonResult(config);
+            }
+            catch (Exception e)
+            {
+                //Return the SSH client message if it fails to connect 
+                return new JsonResult(e.Message);
+            }
+        }
+
+        public JsonResult OnGetInterfaceStatus(int id)
+        {
+            try
+            {
+                string ip = _context.Devices.Where(i => i.ID == id).Select(i => i.IP).First();
+                SshClient client = new SshClient(ip, "test", "test");
+                client.Connect();
+                SshCommand cmd = client.CreateCommand("sh ip int br");
+                cmd.Execute();
+                string[] intDetails = {cmd.Result};
+                client.Disconnect();
+                client.Dispose();
+                return new JsonResult(intDetails);
             }
             catch (Exception e)
             {

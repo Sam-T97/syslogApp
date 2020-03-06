@@ -25,7 +25,7 @@ namespace syslogSite.Pages
         public async Task OnGetAsync()
         {
             Alerts = await _context.alerts
-                .Include(a => a.Device).Where(a => a.Unread == true).ToListAsync();
+                .Include(a => a.Device).Where(a => a.Unread).ToListAsync();
         }
 
         public IActionResult OnGetDelete(int id)

@@ -1,7 +1,7 @@
 ﻿@page
 @using Microsoft.EntityFrameworkCore.Metadata.Internal
 @using SyslogShared.Models
-@model syslogSite.Pages.DeviceUnreadAlertsModel
+@model syslogSite.Pages.DeviceAlertsModel
 @inject SignInManager<IdentityUser> IdentityManager
 @inject UserManager<IdentityUser>  UserManager
 @{
@@ -10,7 +10,7 @@
 }
 @if (IdentityManager.IsSignedIn(User) && User.IsInRole("Admin") || User.IsInRole("Engineer"))
 {
-    <h1>Devices with Unread Alerts:</h1>
+    <h1>Devices with Alerts:</h1>
     <table class="table">
         <thead>
         <tr>

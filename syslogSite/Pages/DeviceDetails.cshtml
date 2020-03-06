@@ -1,63 +1,65 @@
 ﻿@page
 @model syslogSite.Pages.DeviceDetailsModel
-
+@inject SignInManager<IdentityUser> IdentityManager
+@inject UserManager<IdentityUser>  UserManager
 @{
     ViewData["Title"] = "DeviceDetails";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
-<h1>Device Details</h1>
-<div>
-    <h4>@Html.DisplayFor(model => model.Device.HostName)</h4>
-    <hr />
-    <ul class="nav justify-content-center">
-        <li class="nav-item active"><a data-toggle="tab" class="nav-link text-dark" href="#Details">Details</a></li>
-        <li class="nav-item"><a data-toggle="tab" class="nav-link text-dark" href="#Config">Configuration</a></li>
-        <li class="nav-item"><a data-toggle="tab" class="nav-link text-dark" href="#Terminal">Terminal</a></li>
-    </ul>
-    <hr/>
-    <div class="tab-content">
-    <div id="Details" class="tab-pane active">
-        <dl class="row">
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Device.HostName)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Device.HostName)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Device.IP)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Device.IP)
-            </dd>
-        </dl>
+@if (IdentityManager.IsSignedIn(User) && User.IsInRole("Admin") || User.IsInRole("Engineer"))
+{
+    <h1>Device Details</h1>
+    <div>
+        <h4>@Html.DisplayFor(model => model.Device.HostName)</h4>
         <hr/>
-        <h4>Interface Status</h4>
-        <div id="InterfaceViewer" style="overflow-y: scroll; min-height: 0; 
-                                      max-height: 400px; white-space: pre; font-family: monospace;">
+        <ul class="nav justify-content-center">
+            <li class="nav-item active"><a data-toggle="tab" class="nav-link text-dark" href="#Details">Details</a></li>
+            <li class="nav-item"><a data-toggle="tab" class="nav-link text-dark" href="#Config">Configuration</a></li>
+            <li class="nav-item"><a data-toggle="tab" class="nav-link text-dark" href="#Terminal">Terminal</a></li>
+        </ul>
+        <hr/>
+        <div class="tab-content">
+            <div id="Details" class="tab-pane active">
+                <dl class="row">
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.Device.HostName)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.Device.HostName)
+                    </dd>
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.Device.IP)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.Device.IP)
+                    </dd>
+                </dl>
+                <hr/>
+                <h4>Interface Status</h4>
+                <div id="InterfaceViewer" style="overflow-y: scroll; min-height: 0; max-height: 400px; white-space: pre; font-family: monospace;">
+                </div>
+            </div>
+            <div id="Config" class="tab-pane fade">
+                <h4>Backup Config Viewer</h4>
+                <select id="BackupSelect"></select>
+                <div id="BackupConfig" style="overflow-y: scroll; min-height: 0; max-height: 400px;">
+                    <text id="BackupConfigText"></text>
+                </div>
+                <hr/>
+                <h4>Running Config Viewer</h4>
+                <div id="RunningConfig" style="overflow-y: scroll; height: 400px; min-height: 0;">
+                    <text id="RunningConfigText"></text>
+                </div>
+            </div>
+            <div id="Terminal" class="tab-pane fade">
+                Terminal Content here
+            </div>
         </div>
     </div>
-    <div id="Config" class="tab-pane fade">
-        <h4>Backup Config Viewer</h4>
-        <select id="BackupSelect"></select>
-        <div id="BackupConfig" style="overflow-y: scroll; min-height: 0; max-height: 400px;">
-            <text id="BackupConfigText"></text>
-        </div>
-        <hr />
-        <h4>Running Config Viewer</h4>
-        <div id="RunningConfig" style="overflow-y: scroll; height: 400px; min-height: 0;">
-            <text id="RunningConfigText"></text>
-        </div>
+    <div>
+        <a asp-page="./Edit" asp-route-id="@Model.Device.ID">Edit</a> |
+        <a asp-page="./ListDevices">Back to List</a>
     </div>
-        <div id="Terminal" class="tab-pane fade">
-            Terminal Content here
-        </div>
-    </div>
-</div>
-<div>
-    <a asp-page="./Edit" asp-route-id="@Model.Device.ID">Edit</a> |
-    <a asp-page="./ListDevices">Back to List</a>
-</div>
 @section Scripts
 {
     <script>
@@ -66,7 +68,7 @@
             $.ajax({
                 type: "GET",
                 url: "/DeviceDetails?handler=InterfaceStatus",
-                data: { 'id': @Model.Device.ID},
+                data: { 'id': @Model.Device.ID },
                 contentType: "application/json",
                 dataType: "json",
                 success: function(data) {
@@ -104,7 +106,7 @@
                 {
                     type: "GET",
                     url: "/DeviceDetails?handler=RunningConfig",
-                    data: { 'id': @Model.Device.ID},
+                    data: { 'id': @Model.Device.ID },
                     contentType: "application/json",
                     dataType: "json",
                     success: function(data) {
@@ -115,4 +117,16 @@
                 });
         });
     </script>
+}
+}
+else
+{
+    if (User.IsInRole("Standard"))
+    {
+        Response.Redirect("Identity/Account/AccessDenied");
+    }
+    else
+    {
+        Response.Redirect("/Identity/Account/Login");
+    }
 }

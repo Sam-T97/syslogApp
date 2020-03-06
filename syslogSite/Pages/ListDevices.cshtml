@@ -1,19 +1,22 @@
 ﻿@page
 @using Microsoft.EntityFrameworkCore.Metadata.Internal
 @model syslogSite.Pages.ListDevicesModel
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
 
 @{
     ViewData["Title"] = "ListDevices";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
+@if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin") || User.IsInRole("Engineer"))
+{
+    <h1>Devices in Monitoring</h1>
 
-<h1>Devices in Monitoring</h1>
-
-<p>
-    <a asp-page="RegisterDevice">Add New Device</a>
-</p>
-<table class="table">
-    <thead>
+    <p>
+        <a asp-page="RegisterDevice">Add New Device</a>
+    </p>
+    <table class="table">
+        <thead>
         <tr>
             <th>
                 Hostname
@@ -26,26 +29,39 @@
             </th>
             <th></th>
         </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Device) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.HostName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IP)
-            </td>
-            <td>
-                <a asp-page="/UnreadAlertsDeviceFiltered" asp-route-id="@item.ID" asp-route-host="@item.HostName">
-                    @Html.DisplayFor(modelItem => item.Alerts.Count)
-                </a>
-            </td>
-            <td>
-                <a asp-page="./DeviceDetails" asp-route-id="@item.ID">Details</a> |
-                <a asp-page="./RemoveDevice" asp-route-id="@item.ID">Delete</a>
-            </td>
-        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.Device)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.HostName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IP)
+                </td>
+                <td>
+                    <a asp-page="/UnreadAlertsDeviceFiltered" asp-route-id="@item.ID" asp-route-host="@item.HostName">
+                        @Html.DisplayFor(modelItem => item.Alerts.Count)
+                    </a>
+                </td>
+                <td>
+                    <a asp-page="./DeviceDetails" asp-route-id="@item.ID">Details</a> |
+                    <a asp-page="./RemoveDevice" asp-route-id="@item.ID">Delete</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
 }
-    </tbody>
-</table>
+else
+{
+        if (User.IsInRole("Standard"))
+        {
+            Response.Redirect("Identity/Account/AccessDenied");
+        }
+        else
+        {
+            Response.Redirect("/Identity/Account/Login");
+        }
+}

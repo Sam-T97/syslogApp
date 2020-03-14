@@ -98,7 +98,7 @@ namespace syslogSite
                 IdentityUser admin = new IdentityUser
                 {
                     Email = "test@test.com",
-                    UserName = "test",
+                    UserName = "test@test.com",
                     EmailConfirmed = true,
                     NormalizedUserName = "TEST"
                 };

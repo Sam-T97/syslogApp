@@ -14,7 +14,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index"><img src="/Assets/icon.png" style="width: 100px;" /> Syslog Snapper</a>
+                <a class="navbar-brand" asp-area="" asp-page="/Index"><img src="/Assets/icon.png" style="width: 100px;" /></a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -33,10 +33,10 @@
                                         Alerts
                                     </button>
                                     <div class="dropdown-menu" aria-labelledby="alertsDropDown">
-                                        <a class="dropdown-item" href="/UnreadAlerts">Unread</a>
-                                        <a class="dropdown-item" href="/AllAlerts">All</a>
+                                        <a class="dropdown-item" asp-page="./UnreadAlerts">Unread</a>
+                                        <a class="dropdown-item" asp-page="./AllAlerts">All</a>
                                         <a class="dropdown-item" asp-page="./DeviceAlerts">Devices with Alerts</a>
-                                        <a class="dropdown-item" href="/SearchAlerts">Search Alerts</a>
+                                        <a class="dropdown-item" asp-page="./SearchAlerts">Search Alerts</a>
                                     </div>
                                 </div>
                             </li>
@@ -47,14 +47,14 @@
                                         Device Administration
                                     </button>
                                     <div class="dropdown-menu" aria-labelledby="devicesDropDownButton">
-                                        <a class="dropdown-item" href="/RegisterDevice">Register Device for Monitoring</a>
-                                        <a class="dropdown-item" href="/RemoveDevice">Remove Device from System</a>
+                                        <a class="dropdown-item" asp-page="./RegisterDevice">Register Device for Monitoring</a>
+                                        <a class="dropdown-item" asp-page="./RemoveDevice">Remove Device from System</a>
                                         <a class="dropdown-item" href="#">Create a new Remote Device</a>
                                         <a class="dropdown-item" href="#">Remove a Remote Device</a>
                                         <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="/ListDevices">View Devices</a>
+                                        <a class="dropdown-item" asp-page="./ListDevices">View Devices</a>
                                         <a class="dropdown-item" href="#">View Remote Devices</a>
-                                        <a class="dropdown-item" href="/ConfigRollbackTest">Test Config Rollback</a>
+                                        <a class="dropdown-item" asp-page="./ConfigRollbackTest">Test Config Rollback</a>
                                         <a class="dropdown-item" href="#">Something else here</a>
                                     </div>
                                 </div>

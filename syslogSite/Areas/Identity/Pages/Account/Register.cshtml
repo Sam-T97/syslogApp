@@ -27,37 +27,34 @@
                 <input asp-for="Input.ConfirmPassword" class="form-control" />
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="Input.Role"></label>
+                <select asp-for="Input.Role" class="form-control">
+                    <option value="Select a role" selected disabled hidden></option>
+                    @foreach (var role in Model.Roles)
+                    {
+                        <option value="@role.Name">@role</option>
+                    }
+                </select>
+                <span asp-validation-for="Input.Role" class="text-danger"></span>
+            </div>
             <button type="submit" class="btn btn-primary">Register</button>
         </form>
     </div>
     <div class="col-md-6 col-md-offset-2">
         <section>
-            <h4>Use another service to register.</h4>
+            <h4>Use this page to register users.</h4>
             <hr />
-            @{
-                if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                {
-                    <div>
-                        <p>
-                            There are no external authentication services configured. See <a href="https://go.microsoft.com/fwlink/?LinkID=532715">this article</a>
-                            for details on setting up this ASP.NET application to support logging in via external services. Test
-                        </p>
-                    </div>
-                }
-                else
-                {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                        <div>
-                            <p>
-                                @foreach (var provider in Model.ExternalLogins)
-                                {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                }
-                            </p>
-                        </div>
-                    </form>
-                }
-            }
+            <p>
+                Users within the standard group will only have access to the reporting functions of the system.<br/>
+                This is ideal for managerial accounts who do not need to see technical data. 
+            </p>
+            <p>
+                In addition to standard. Users in the engineer group will be able to administrate devices within the system. 
+            </p>
+            <p>
+                In addition to engineer. Users within the admin group will have the ability to create and manage users within the system.
+            </p>
         </section>
     </div>
 </div>

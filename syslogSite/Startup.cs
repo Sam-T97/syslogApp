@@ -77,7 +77,7 @@ namespace syslogSite
 
         public void CreateRoles(IServiceProvider serviceProvider)
         {
-            string[] roles = new[] {"Admin", "Engineer", "Standard"};
+            string[] roles = new[] {"Admin", "Engineer", "Standard", "Has2FA"};
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
             foreach (string role in roles)

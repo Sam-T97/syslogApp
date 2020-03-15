@@ -52,7 +52,7 @@
                 </div>
             </div>
             <div id="Terminal" class="tab-pane fade">
-                Terminal Content here
+                <div id="TerminalScreen"></div>
             </div>
         </div>
     </div>
@@ -62,8 +62,19 @@
     </div>
 @section Scripts
 {
+    <script src="js/terminal.js"></script>
     <script>
-        $(document).ready(function() {
+        var terminal = new Terminal();
+        $(document).ready(function () {
+            //Setup the terminal environment
+            terminal.blinkingCursor(true);
+            terminal.setHeight('500px');
+            terminal.setWidth('1100px');
+            document.getElementById("TerminalScreen").appendChild(terminal.html);
+            terminal.input("Press return to connect with @Model.Device.HostName",
+                function(input) {
+                    sendCommand(input);
+                });
             //Get the Interface status from the device
             $.ajax({
                 type: "GET",
@@ -76,7 +87,7 @@
                     var interfaceText = document.getElementById("InterfaceViewer");
                     interfaceText.innerText = data;
                 }
-            })
+            });
             //Get the backup configs available from the PI assigned to the device (if any)
             $.ajax(
                 {
@@ -116,6 +127,27 @@
                     }
                 });
         });
+        //This is essentially a looping function where it will call back to itself when the user sends an input 
+        //It then primes the terminal for new input using the received data as a 'question'
+        function sendCommand(command) {
+            $.ajax({
+                type: "GET",
+                url: "/Terminal?handler=Command",
+                data: { command: command },
+                contentType: "application/json",
+                dataType: "json",
+                success: function (data) {
+                    var message = data.result;
+                    terminal.input(message, function(input) {
+                        sendCommand(input);
+                    });
+                    //var splitMessage = message.split('\n');
+                    //splitMessage.forEach(item => terminalTest.print(item));
+                    //console.log(data.result);
+                    //terminalTest.print(data.result);
+                }
+            });
+        }
     </script>
 }
 }

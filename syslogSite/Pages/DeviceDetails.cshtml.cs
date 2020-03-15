@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using SyslogShared;
 using SyslogShared.Models;
@@ -15,6 +16,8 @@ namespace syslogSite.Pages
     public class DeviceDetailsModel : PageModel
     {
         private readonly SyslogShared.ApplicationDbContext _context;
+        private readonly IMemoryCache _cache;
+        private static SshClient terminalClient;
 
         public DeviceDetailsModel(SyslogShared.ApplicationDbContext context)
         {
@@ -107,6 +110,30 @@ namespace syslogSite.Pages
             catch (Exception e)
             {
                 return new JsonResult(e.Message);
+            }
+        }
+
+        public ActionResult OnGetCommand(string command)
+        {
+            GetClient();
+            var cmd = terminalClient.RunCommand(command);
+            return new JsonResult(new
+            {
+                result = cmd.Result
+            });
+        }
+
+        private void GetClient()
+        {
+            if (_cache.Get("client") != null)
+            {
+                terminalClient = (SshClient)_cache.Get("client");
+            }
+            else
+            {
+                terminalClient = new SshClient("test","test", "test"); //TODO get pi details from the DB and windows server
+                terminalClient.Connect();
+                _cache.Set("client", terminalClient); //TODO set this to a unique client identifier
             }
         }
     }

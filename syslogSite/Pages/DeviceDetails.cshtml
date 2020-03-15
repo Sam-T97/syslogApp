@@ -51,7 +51,7 @@
                     <text id="RunningConfigText"></text>
                 </div>
             </div>
-            <div id="Terminal" class="tab-pane fade">
+            <div id="Terminal" class="tab-pane fade" >
                 <div id="TerminalScreen"></div>
             </div>
         </div>
@@ -67,9 +67,13 @@
         var terminal = new Terminal();
         $(document).ready(function () {
             //Setup the terminal environment
+            //Overwrite the JS Files presets to enable scrolling and set the terminal size
+            terminal._innerWindow.style.overflowY = 'scroll';
+            terminal._innerWindow.style.height = '500px';
             terminal.blinkingCursor(true);
             terminal.setHeight('500px');
             terminal.setWidth('1100px');
+            //append the now butchered and hacked up terminal screen to the display div
             document.getElementById("TerminalScreen").appendChild(terminal.html);
             terminal.input("Press return to connect with @Model.Device.HostName",
                 function(input) {
@@ -132,7 +136,7 @@
         function sendCommand(command) {
             $.ajax({
                 type: "GET",
-                url: "/Terminal?handler=Command",
+                url: "/DeviceDetails?handler=Command",
                 data: { command: command },
                 contentType: "application/json",
                 dataType: "json",
@@ -141,10 +145,14 @@
                     terminal.input(message, function(input) {
                         sendCommand(input);
                     });
-                    //var splitMessage = message.split('\n');
-                    //splitMessage.forEach(item => terminalTest.print(item));
-                    //console.log(data.result);
-                    //terminalTest.print(data.result);
+                    terminal._innerWindow.scrollTop = terminal._innerWindow.scrollHeight;
+                },
+                error: function() {
+                    terminal.input("We had some trouble sending your command to the device, feel free to try again",
+                        function(input) {
+                            sendCommand(input);
+                        });
+                    terminal._innerWindow.scrollTop = terminal._innerWindow.scrollHeight;
                 }
             });
         }

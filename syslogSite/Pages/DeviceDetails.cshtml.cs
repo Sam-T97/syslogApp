@@ -112,15 +112,22 @@ namespace syslogSite.Pages
                 return new JsonResult(e.Message);
             }
         }
-
+        [HttpGet]
         public ActionResult OnGetCommand(string command)
         {
-            GetClient();
-            var cmd = terminalClient.RunCommand(command);
-            return new JsonResult(new
+            try
             {
-                result = cmd.Result
-            });
+                GetClient();
+                var cmd = terminalClient.RunCommand(command);
+                return new JsonResult(new
+                {
+                    result = cmd.Result
+                });
+            }
+            catch (Exception e)
+            {
+                return NotFound();
+            }
         }
 
         private void GetClient()

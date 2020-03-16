@@ -46,10 +46,10 @@ namespace syslogSite.Pages
         {
             try
             {
-                string remoteIP;
+                string remoteIP = "0.0.0.0";
                 try
                 {
-                    remoteIP = _context.RemoteDevices.Where(i => i.DeviceID == id).Select(i => i.IP).First();
+                    //remoteIP = _context.RemoteDevices.Where(i => i.DeviceID == id).Select(i => i.IP).First();
                 }
                 catch (Exception e)
                 {

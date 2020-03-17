@@ -1,0 +1,172 @@
+﻿@page
+@model syslogSite.Pages.DeviceDetailsModel
+@inject SignInManager<IdentityUser> IdentityManager
+@inject UserManager<IdentityUser>  UserManager
+@{
+    ViewData["Title"] = "DeviceDetails";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+@if (IdentityManager.IsSignedIn(User) && User.IsInRole("Admin") || User.IsInRole("Engineer"))
+{
+    <h1>Device Details</h1>
+    <div>
+        <h4>@Html.DisplayFor(model => model.Device.HostName)</h4>
+        <hr/>
+        <ul class="nav justify-content-center">
+            <li class="nav-item active"><a data-toggle="tab" class="nav-link text-dark" href="#Details">Details</a></li>
+            <li class="nav-item"><a data-toggle="tab" class="nav-link text-dark" href="#Config">Configuration</a></li>
+            <li class="nav-item"><a data-toggle="tab" class="nav-link text-dark" href="#Terminal">Terminal</a></li>
+        </ul>
+        <hr/>
+        <div class="tab-content">
+            <div id="Details" class="tab-pane active">
+                <dl class="row">
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.Device.HostName)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.Device.HostName)
+                    </dd>
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.Device.IP)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.Device.IP)
+                    </dd>
+                </dl>
+                <hr/>
+                <h4>Interface Status</h4>
+                <div id="InterfaceViewer" style="overflow-y: scroll; min-height: 0; max-height: 400px; white-space: pre; font-family: monospace;">
+                </div>
+            </div>
+            <div id="Config" class="tab-pane fade">
+                <h4>Backup Config Viewer</h4>
+                <select id="BackupSelect"></select>
+                <div id="BackupConfig" style="overflow-y: scroll; min-height: 0; max-height: 400px;">
+                    <text id="BackupConfigText"></text>
+                </div>
+                <hr/>
+                <h4>Running Config Viewer</h4>
+                <div id="RunningConfig" style="overflow-y: scroll; height: 400px; min-height: 0;">
+                    <text id="RunningConfigText"></text>
+                </div>
+            </div>
+            <div id="Terminal" class="tab-pane fade" >
+                <div id="TerminalScreen"></div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <a asp-page="./Edit" asp-route-id="@Model.Device.ID">Edit</a> |
+        <a asp-page="./ListDevices">Back to List</a>
+    </div>
+@section Scripts
+{
+    <script src="js/terminal.js"></script>
+    <script>
+        var terminal = new Terminal();
+        $(document).ready(function () {
+            //Setup the terminal environment
+            //Overwrite the JS Files presets to enable scrolling and set the terminal size
+            terminal._innerWindow.style.overflowY = 'scroll';
+            terminal._innerWindow.style.height = '500px';
+            terminal.blinkingCursor(true);
+            terminal.setHeight('500px');
+            terminal.setWidth('1100px');
+            //append the now butchered and hacked up terminal screen to the display div
+            document.getElementById("TerminalScreen").appendChild(terminal.html);
+            terminal.input("Press return to connect with @Model.Device.HostName",
+                function(input) {
+                    sendCommand(input);
+                });
+            //Get the Interface status from the device
+            $.ajax({
+                type: "GET",
+                url: "/DeviceDetails?handler=InterfaceStatus",
+                data: { 'id': @Model.Device.ID },
+                contentType: "application/json",
+                dataType: "json",
+                success: function(data) {
+                    console.log(data);
+                    var interfaceText = document.getElementById("InterfaceViewer");
+                    interfaceText.innerText = data;
+                }
+            });
+            //Get the backup configs available from the PI assigned to the device (if any)
+            $.ajax(
+                {
+                    type: "GET",
+                    url: "/DeviceDetails?handler=BackupConfigs",
+                    data: {},
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function(data) {
+                        console.log(data);
+                        var dropdown = document.getElementById("BackupSelect");
+                        for (var i = 0; i < data.length; i++) {
+                            var opt = document.createElement('option');
+                            opt.appendChild(document.createTextNode(data[i].toString()));
+                            opt.value = data[i].toString();
+                            dropdown.appendChild(opt);
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        document.getElementById("BackupConfigText").innerText =
+                            "Something went wrong trying to collect the backup config file names \n" +
+                            "Check the remote device is live by looking at its details and try again";
+                    }
+                });
+            //Grab the running config directly from the device
+            $.ajax(
+                {
+                    type: "GET",
+                    url: "/DeviceDetails?handler=RunningConfig",
+                    data: { 'id': @Model.Device.ID },
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function(data) {
+                        console.log(data);
+                        var configArea = document.getElementById("RunningConfigText");
+                        configArea.innerText = data;
+                    }
+                });
+        });
+        //This is essentially a looping function where it will call back to itself when the user sends an input 
+        //It then primes the terminal for new input using the received data as a 'question'
+        function sendCommand(command) {
+            $.ajax({
+                type: "GET",
+                url: "/DeviceDetails?handler=Command",
+                data: { command: command },
+                contentType: "application/json",
+                dataType: "json",
+                success: function (data) {
+                    var message = data.result;
+                    terminal.input(message, function(input) {
+                        sendCommand(input);
+                    });
+                    terminal._innerWindow.scrollTop = terminal._innerWindow.scrollHeight;
+                },
+                error: function() {
+                    terminal.input("We had some trouble sending your command to the device, feel free to try again",
+                        function(input) {
+                            sendCommand(input);
+                        });
+                    terminal._innerWindow.scrollTop = terminal._innerWindow.scrollHeight;
+                }
+            });
+        }
+    </script>
+}
+}
+else
+{
+    if (User.IsInRole("Standard"))
+    {
+        Response.Redirect("Identity/Account/AccessDenied");
+    }
+    else
+    {
+        Response.Redirect("/Identity/Account/Login");
+    }
+}

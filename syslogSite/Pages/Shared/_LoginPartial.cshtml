@@ -5,6 +5,26 @@
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
+        if (User.IsInRole("Admin"))
+        {
+            <li>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle bg-dark border-dark" type="button" id="adminDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Administration
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="adminDropDown">
+                        <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Register">Register Users</a>
+                        <a class="dropdown-item" asp-area="Identity" asp-page="/Account/ResetPassword">Reset Users Password</a>
+                        <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/DeletePersonalData">Delete a user</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Set the Heartbeat Interval</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Add users to email alerting</a>
+                        <a class="dropdown-item" href="#">Remove user from email alerting</a>
+                    </div>
+                </div>
+            </li>
+        }
         <li class="nav-item">
             <a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity.Name!</a>
         </li>
@@ -16,9 +36,6 @@
     }
     else
     {
-        <li class="nav-item">
-            <a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Register">Register</a>
-        </li>
         <li class="nav-item">
             <a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Login">Login</a>
         </li>

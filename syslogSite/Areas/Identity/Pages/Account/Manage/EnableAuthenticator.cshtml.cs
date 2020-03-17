@@ -16,6 +16,7 @@ namespace syslogSite.Areas.Identity.Pages.Account.Manage
     public class EnableAuthenticatorModel : PageModel
     {
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<EnableAuthenticatorModel> _logger;
         private readonly UrlEncoder _urlEncoder;
 
@@ -24,11 +25,13 @@ namespace syslogSite.Areas.Identity.Pages.Account.Manage
         public EnableAuthenticatorModel(
             UserManager<IdentityUser> userManager,
             ILogger<EnableAuthenticatorModel> logger,
-            UrlEncoder urlEncoder)
+            UrlEncoder urlEncoder,
+            SignInManager<IdentityUser> signInManager)
         {
             _userManager = userManager;
             _logger = logger;
             _urlEncoder = urlEncoder;
+            _signInManager = signInManager;
         }
 
         public string SharedKey { get; set; }
@@ -98,12 +101,20 @@ namespace syslogSite.Areas.Identity.Pages.Account.Manage
             _logger.LogInformation("User with ID '{UserId}' has enabled 2FA with an authenticator app.", userId);
 
             StatusMessage = "Your authenticator app has been verified.";
-
-            if (await _userManager.CountRecoveryCodesAsync(user) == 0)
+            Task<IdentityResult> result = _userManager.AddToRoleAsync(user, "Has2FA");
+            if (result.Result.Succeeded)
             {
-                var recoveryCodes = await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10);
-                RecoveryCodes = recoveryCodes.ToArray();
-                return RedirectToPage("./ShowRecoveryCodes");
+                if (await _userManager.CountRecoveryCodesAsync(user) == 0)
+                {
+                    var recoveryCodes = await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10);
+                    RecoveryCodes = recoveryCodes.ToArray();
+                    await _signInManager.RefreshSignInAsync(user);
+                    return RedirectToPage("./ShowRecoveryCodes");
+                }
+                else
+                {
+                    return RedirectToPage("./TwoFactorAuthentication");
+                }
             }
             else
             {
@@ -148,7 +159,7 @@ namespace syslogSite.Areas.Identity.Pages.Account.Manage
         {
             return string.Format(
                 AuthenticatorUriFormat,
-                _urlEncoder.Encode("syslogSite"),
+                _urlEncoder.Encode("Syslog Snapper"),
                 _urlEncoder.Encode(email),
                 unformattedKey);
         }

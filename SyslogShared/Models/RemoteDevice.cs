@@ -8,8 +8,7 @@ namespace SyslogShared.Models
     {
         [Key]
         public int ID { get; set;}
-        [Required]
-        public string IP { get; set; }
+
         [Required]
         public string HostName { get; set; }
         public int DeviceID { get; set; }

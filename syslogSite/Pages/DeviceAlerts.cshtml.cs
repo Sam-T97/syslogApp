@@ -11,10 +11,10 @@ using SyslogShared.Models;
 
 namespace syslogSite.Pages
 {
-    public class DeviceUnreadAlertsModel : PageModel
+    public class DeviceAlertsModel : PageModel
     {
         private readonly SyslogShared.ApplicationDbContext _context;
-        public DeviceUnreadAlertsModel(SyslogShared.ApplicationDbContext context)
+        public DeviceAlertsModel(SyslogShared.ApplicationDbContext context)
         {
             _context = context;
         }

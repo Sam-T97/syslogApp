@@ -20,7 +20,7 @@ namespace syslogSite.Pages
         }
         [BindProperty(SupportsGet = true)]
         public string SearchString { get; set; }
-        public IList<Alerts> Alerts { get;set; }
+        public List<Alerts> Alerts { get;set; }
 
         public async Task OnGetAsync()
         {
@@ -29,10 +29,12 @@ namespace syslogSite.Pages
                 Alerts = await _context.alerts
                     .Include(a => a.Device)
                     .Where(a => a.Device.HostName.Contains(SearchString)
-                                && a.Facility.Contains(SearchString.ToUpper())
-                                && a.Severity == int.Parse(SearchString)
-                                && a.HostIP.Contains(SearchString)
-                                && a.Message.Contains(SearchString)).ToListAsync();
+                                || a.Facility.Contains(SearchString.ToUpper())
+                                || a.HostIP == SearchString
+                                || a.Message.Contains(SearchString))
+                                .ToListAsync();
+
+
             }
             else
             {

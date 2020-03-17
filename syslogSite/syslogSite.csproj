@@ -32,6 +32,9 @@
 
 
   <ItemGroup>
+    <Content Update="Pages\RemoveDevice.cshtml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
     <Content Update="wwwroot\favicon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

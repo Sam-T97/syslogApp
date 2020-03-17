@@ -42,6 +42,8 @@ namespace syslogSite
                     .AddEntityFrameworkStores<ApplicationDbContext>()
                     .AddDefaultTokenProviders();
             services.AddRazorPages();
+            services.AddMemoryCache();
+            services.AddSession();
             services.AddMvc();
         }
 
@@ -68,6 +70,8 @@ namespace syslogSite
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseSession();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
@@ -77,7 +81,7 @@ namespace syslogSite
 
         public void CreateRoles(IServiceProvider serviceProvider)
         {
-            string[] roles = new[] {"Admin", "Engineer", "Standard"};
+            string[] roles = new[] {"Admin", "Engineer", "Standard", "Has2FA"};
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
             foreach (string role in roles)
@@ -98,7 +102,7 @@ namespace syslogSite
                 IdentityUser admin = new IdentityUser
                 {
                     Email = "test@test.com",
-                    UserName = "test",
+                    UserName = "test@test.com",
                     EmailConfirmed = true,
                     NormalizedUserName = "TEST"
                 };

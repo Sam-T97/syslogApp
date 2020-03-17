@@ -21,11 +21,10 @@ namespace syslogSite.Pages
     {
         private readonly SyslogShared.ApplicationDbContext _context;
         private const string Characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!£$%&";
-        private IHostingEnvironment _env;
-        public RegisterRemoteDeviceModel(SyslogShared.ApplicationDbContext context, IHostingEnvironment env)
+        public string feedback;
+        public RegisterRemoteDeviceModel(SyslogShared.ApplicationDbContext context)
         {
             _context = context;
-            _env = env;
         }
 
 
@@ -53,13 +52,14 @@ namespace syslogSite.Pages
             adClient.Connect();
             ShellStream stream = adClient.CreateShellStream("", 20, 50, 1024, 1024, 500);
             stream.Flush();
-            stream.WriteLine("powershell C:\\Users\\website\\CreatePI.ps1 \""+toAdd.HostName+"\" \"Password123!\"");
+            stream.WriteLine("powershell C:\\Users\\website\\CreatePI.ps1 \""+toAdd.HostName+"\" \" Password123!\"");
             Thread.Sleep(4000);
             adClient.Disconnect();
             adClient.Dispose();
             _context.RemoteDevices.Add(toAdd);
             await _context.SaveChangesAsync();
-            return RedirectToPage("./Index");
+            feedback = "The remote device has been registered. The PPTP Username is: " + toAdd.HostName;
+            return Page();
         }
         public static string GetRandomPassword(int length)
         {

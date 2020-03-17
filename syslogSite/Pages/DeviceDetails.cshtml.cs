@@ -42,21 +42,29 @@ namespace syslogSite.Pages
             return Page();
         }
 
-        public ActionResult OnGetBackupConfigs(int id)
+        public ActionResult OnGetBackupConfigs()
         {
             try
             {
-                string remoteIP = "0.0.0.0";
+                string piIP;
                 try
                 {
-                    //remoteIP = _context.RemoteDevices.Where(i => i.DeviceID == id).Select(i => i.IP).First();
+                    string piHost = _context.RemoteDevices.Where(d => d.Device.ID == Device.ID).Select(h => h.HostName).First();
+                    using SshClient adClient = new SshClient("10.0.10.4","website","Password123!");
+                    adClient.Connect();
+                    var adCMD = adClient.CreateCommand("powershell C:\\Users\\website\\GetClients.ps1 \"" + piHost + "\"");
+                    adCMD.Execute();
+                    piIP = adCMD.Result;
+                    piIP = piIP.TrimEnd('\n');
+                    adClient.Disconnect();
+                    adClient.Dispose();
                 }
                 catch (Exception e)
                 {
                     string[] error = {"No remote device configured"};
                     return new JsonResult(error);
                 }
-                SshClient client = new SshClient(remoteIP, "pi", "test");
+                SshClient client = new SshClient(piIP, "pi", "test");
                 client.Connect();
                 SshCommand cmd = client.CreateCommand("./ListConfigs.py");
                 cmd.Execute();

@@ -65,7 +65,7 @@
     <script src="js/terminal.js"></script>
     <script>
         var terminal = new Terminal();
-        $(document).ready(function () {
+        $(document).ready(function() {
             //Setup the terminal environment
             //Overwrite the JS Files presets to enable scrolling and set the terminal size
             terminal._innerWindow.style.overflowY = 'scroll';
@@ -97,23 +97,38 @@
                 {
                     type: "GET",
                     url: "/DeviceDetails?handler=BackupConfigs",
-                    data: {},
+                    data: { 'id': @Model.Device.ID },
                     contentType: "application/json",
                     dataType: "json",
                     success: function(data) {
-                        console.log(data);
                         var dropdown = document.getElementById("BackupSelect");
-                        for (var i = 0; i < data.length; i++) {
-                            var opt = document.createElement('option');
-                            opt.appendChild(document.createTextNode(data[i].toString()));
-                            opt.value = data[i].toString();
-                            dropdown.appendChild(opt);
+                        try {
+                            console.log(data);
+                            if (!Array.isArray(data) || !data.length) {
+                                document.getElementById("BackupConfigText").innerText =
+                                    "No backup files were returned. Backups run at midnight each day. \n"
+                                    +"Maybe a backup hasn't run yet? Otherwise check the console cable is functioning correctly";
+                                dropdown.disabled = true;
+                            } else {
+                                for (var i = 0; i < data.length; i++) {
+                                    var opt = document.createElement('option');
+                                    opt.appendChild(document.createTextNode(data[i].toString()));
+                                    opt.value = data[i].toString();
+                                    dropdown.appendChild(opt);
+                                }
+                            }
+                        } catch (err) {
+                            document.getElementById("BackupConfigText").innerText =
+                                "Something went wrong trying to collect the backup config file names \n" +
+                                "Check the remote device is live by looking at its details and try again";
+                            dropdown.disabled = true;
                         }
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
                         document.getElementById("BackupConfigText").innerText =
                             "Something went wrong trying to collect the backup config file names \n" +
                             "Check the remote device is live by looking at its details and try again";
+                        dropdown.disabled = true;
                     }
                 });
             //Grab the running config directly from the device
@@ -131,20 +146,22 @@
                     }
                 });
         });
+
         //This is essentially a looping function where it will call back to itself when the user sends an input 
         //It then primes the terminal for new input using the received data as a 'question'
         function sendCommand(command) {
             $.ajax({
                 type: "GET",
                 url: "/DeviceDetails?handler=Command",
-                data: { command: command },
+                data: { command: command, id: @Model.Device.ID },
                 contentType: "application/json",
                 dataType: "json",
-                success: function (data) {
+                success: function(data) {
                     var message = data.result;
-                    terminal.input(message, function(input) {
-                        sendCommand(input);
-                    });
+                    terminal.input(message,
+                        function(input) {
+                            sendCommand(input);
+                        });
                     terminal._innerWindow.scrollTop = terminal._innerWindow.scrollHeight;
                 },
                 error: function() {

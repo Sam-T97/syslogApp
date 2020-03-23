@@ -42,14 +42,14 @@ namespace syslogSite.Pages
             return Page();
         }
 
-        public ActionResult OnGetBackupConfigs()
+        public ActionResult OnGetBackupConfigs(int id)
         {
             try
             {
                 string piIP;
                 try
                 {
-                    string piHost = _context.RemoteDevices.Where(d => d.Device.ID == Device.ID).Select(h => h.HostName).First();
+                    string piHost = _context.RemoteDevices.Where(d => d.Device.ID == id).Select(h => h.HostName).First();
                     using SshClient adClient = new SshClient("10.0.10.4","website","Password123!");
                     adClient.Connect();
                     var adCMD = adClient.CreateCommand("powershell C:\\Users\\website\\GetClients.ps1 \"" + piHost + "\"");
@@ -68,6 +68,10 @@ namespace syslogSite.Pages
                 client.Connect();
                 SshCommand cmd = client.CreateCommand("./ListConfigs.py");
                 cmd.Execute();
+                if (String.IsNullOrWhiteSpace(cmd.Result))
+                {
+                    return new JsonResult(new EmptyResult());
+                }
                 List<string> configs = cmd.Result.Split(new[] {"\n"}, StringSplitOptions.None).ToList();
                 client.Disconnect();
                 client.Dispose();
@@ -120,12 +124,11 @@ namespace syslogSite.Pages
                 return new JsonResult(e.Message);
             }
         }
-        [HttpGet]
-        public ActionResult OnGetCommand(string command)
+        public ActionResult OnGetCommand(string command, int id)
         {
             try
             {
-                GetClient();
+                GetClient(id);
                 var cmd = terminalClient.RunCommand(command);
                 return new JsonResult(new
                 {
@@ -138,7 +141,7 @@ namespace syslogSite.Pages
             }
         }
 
-        private void GetClient()
+        private void GetClient(int id)
         {
             if (_cache.Get("client") != null)
             {
@@ -146,9 +149,27 @@ namespace syslogSite.Pages
             }
             else
             {
-                terminalClient = new SshClient("test","test", "test"); //TODO get pi details from the DB and windows server
-                terminalClient.Connect();
-                _cache.Set("client", terminalClient); //TODO set this to a unique client identifier
+                string piIP;
+                try
+                {
+                    string piHost = _context.RemoteDevices.Where(d => d.Device.ID == id).Select(h => h.HostName)
+                        .First();
+                    using SshClient adClient = new SshClient("10.0.10.4", "website", "Password123!");
+                    adClient.Connect();
+                    var adCMD = adClient.CreateCommand("powershell C:\\Users\\website\\GetClients.ps1 \"" + piHost + "\"");
+                    adCMD.Execute();
+                    piIP = adCMD.Result;
+                    piIP = piIP.TrimEnd('\n');
+                    adClient.Disconnect();
+                    adClient.Dispose();
+                    terminalClient = new SshClient(piIP, "pi", "test");
+                    terminalClient.Connect();
+                    _cache.Set("client", terminalClient); //TODO set this to a unique client identifier
+                }
+                catch (Exception e)
+                {
+                    _cache.Set("client", terminalClient); //Set null client to cache to trigger error message
+                }
             }
         }
     }

@@ -160,6 +160,7 @@
                 dataType: "json",
                 success: function(data) {
                     var message = data.result;
+                    console.log(message);
                     terminal.input(message,
                         function(input) {
                             sendCommand(input);

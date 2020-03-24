@@ -108,8 +108,8 @@
                             console.log(data);
                             if (!Array.isArray(data) || !data.length) {
                                 document.getElementById("BackupConfigText").innerText =
-                                    "No backup files were returned. Backups run at midnight each day. \n"
-                                    +"Maybe a backup hasn't run yet? Otherwise check the console cable is functioning correctly";
+                                    "No backup files were returned. Backups run at midnight each day. \n" +
+                                    "Maybe a backup hasn't run yet? Otherwise check the console cable is functioning correctly";
                                 dropdown.disabled = true;
                             } else {
                                 for (var i = 0; i < data.length; i++) {
@@ -161,10 +161,17 @@
                 success: function(data) {
                     var message = data.result;
                     console.log(message);
-                    terminal.input(message,
-                        function(input) {
-                            sendCommand(input);
-                        });
+                    if (data.result.includes("Password:")) {
+                        terminal.password(message,
+                            function(input) {
+                                sendCommand(input);
+                            });
+                    } else {
+                        terminal.input(message,
+                            function(input) {
+                                sendCommand(input);
+                            });
+                    }
                     terminal._innerWindow.scrollTop = terminal._innerWindow.scrollHeight;
                 },
                 error: function() {

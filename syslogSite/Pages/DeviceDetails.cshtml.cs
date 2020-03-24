@@ -129,7 +129,8 @@ namespace syslogSite.Pages
             try
             {
                 GetClient(id);
-                var cmd = terminalClient.RunCommand(command);
+                dynamic cmd = !string.IsNullOrWhiteSpace(command) ? terminalClient.RunCommand("./SendCommand.py " + "\"" + command + "\"") 
+                    : terminalClient.RunCommand("./SendCommand.py");
                 return new JsonResult(new
                 {
                     result = cmd.Result
@@ -143,17 +144,16 @@ namespace syslogSite.Pages
 
         private void GetClient(int id)
         {
-            if (_cache.Get("client") != null)
+            if (_cache.Get("client" + id) != null)
             {
-                terminalClient = (SshClient)_cache.Get("client");
+                terminalClient = (SshClient)_cache.Get("client"+id);
             }
             else
             {
                 string piIP;
                 try
                 {
-                    string piHost = _context.RemoteDevices.Where(d => d.Device.ID == id).Select(h => h.HostName)
-                        .First();
+                    string piHost = _context.RemoteDevices.Where(d => d.Device.ID == id).Select(h => h.HostName).First();
                     using SshClient adClient = new SshClient("10.0.10.4", "website", "Password123!");
                     adClient.Connect();
                     var adCMD = adClient.CreateCommand("powershell C:\\Users\\website\\GetClients.ps1 \"" + piHost + "\"");
@@ -164,11 +164,11 @@ namespace syslogSite.Pages
                     adClient.Dispose();
                     terminalClient = new SshClient(piIP, "pi", "test");
                     terminalClient.Connect();
-                    _cache.Set("client", terminalClient); //TODO set this to a unique client identifier
+                    _cache.Set("client"+ id, terminalClient); //TODO set this to a unique client identifier
                 }
                 catch (Exception e)
                 {
-                    _cache.Set("client", terminalClient); //Set null client to cache to trigger error message
+                    _cache.Set("client"+id, terminalClient); //Set null client to cache to trigger error message
                 }
             }
         }

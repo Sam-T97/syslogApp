@@ -17,11 +17,12 @@ namespace syslogSite.Pages
     {
         private readonly SyslogShared.ApplicationDbContext _context;
         private readonly IMemoryCache _cache;
-        private static SshClient terminalClient;
+        private static SshClient _terminalClient;
 
-        public DeviceDetailsModel(SyslogShared.ApplicationDbContext context)
+        public DeviceDetailsModel(SyslogShared.ApplicationDbContext context, IMemoryCache cache)
         {
             _context = context;
+            _cache = cache;
         }
 
         public Device Device { get; set; }
@@ -129,8 +130,8 @@ namespace syslogSite.Pages
             try
             {
                 GetClient(id);
-                dynamic cmd = !string.IsNullOrWhiteSpace(command) ? terminalClient.RunCommand("./SendCommand.py " + "\"" + command + "\"") 
-                    : terminalClient.RunCommand("./SendCommand.py");
+                dynamic cmd = !string.IsNullOrWhiteSpace(command) ? _terminalClient.RunCommand("./SendCommand.py " + "\"" + command + "\"") 
+                    : _terminalClient.RunCommand("./SendCommand.py");
                 return new JsonResult(new
                 {
                     result = cmd.Result
@@ -146,7 +147,7 @@ namespace syslogSite.Pages
         {
             if (_cache.Get("client" + id) != null)
             {
-                terminalClient = (SshClient)_cache.Get("client"+id);
+                _terminalClient = (SshClient)_cache.Get("client"+id);
             }
             else
             {
@@ -162,13 +163,13 @@ namespace syslogSite.Pages
                     piIP = piIP.TrimEnd('\n');
                     adClient.Disconnect();
                     adClient.Dispose();
-                    terminalClient = new SshClient(piIP, "pi", "test");
-                    terminalClient.Connect();
-                    _cache.Set("client"+ id, terminalClient); //TODO set this to a unique client identifier
+                    _terminalClient = new SshClient(piIP, "pi", "test");
+                    _terminalClient.Connect();
+                    _cache.Set("client"+ id, _terminalClient); //TODO set this to a unique client identifier
                 }
                 catch (Exception e)
                 {
-                    _cache.Set("client"+id, terminalClient); //Set null client to cache to trigger error message
+                    _cache.Set("client"+id, _terminalClient); //Set null client to cache to trigger error message
                 }
             }
         }

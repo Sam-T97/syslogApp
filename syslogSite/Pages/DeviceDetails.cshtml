@@ -70,6 +70,8 @@
             //Overwrite the JS Files presets to enable scrolling and set the terminal size
             terminal._innerWindow.style.overflowY = 'scroll';
             terminal._innerWindow.style.height = '500px';
+            terminal._innerWindow.style.whiteSpace = 'pre';
+            terminal._innerWindow.style.fontFamily = 'monospace';
             terminal.blinkingCursor(true);
             terminal.setHeight('500px');
             terminal.setWidth('1100px');

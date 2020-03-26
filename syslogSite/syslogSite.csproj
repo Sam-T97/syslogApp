@@ -158,6 +158,9 @@
     <Content Update="wwwroot\lib\jquery\LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Update="wwwroot\PIBuild.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="wwwroot\Scripts.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

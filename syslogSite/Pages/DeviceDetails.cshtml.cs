@@ -60,7 +60,7 @@ namespace syslogSite.Pages
                     adClient.Disconnect();
                     adClient.Dispose();
                 }
-                catch (Exception e)
+                catch
                 {
                     string[] error = {"No remote device configured"};
                     return new JsonResult(error);
@@ -78,7 +78,7 @@ namespace syslogSite.Pages
                 client.Dispose();
                 return new JsonResult(configs);
             }
-            catch(Exception e)
+            catch
             {
                 //Return failure if we can't connect to the PI
                 return NotFound();
@@ -137,7 +137,7 @@ namespace syslogSite.Pages
                     result = cmd.Result
                 });
             }
-            catch (Exception e)
+            catch
             {
                 return NotFound();
             }
@@ -167,10 +167,24 @@ namespace syslogSite.Pages
                     _terminalClient.Connect();
                     _cache.Set("client"+ id, _terminalClient); //TODO set this to a unique client identifier
                 }
-                catch (Exception e)
+                catch
                 {
                     _cache.Set("client"+id, _terminalClient); //Set null client to cache to trigger error message
                 }
+            }
+        }
+
+        public ActionResult OnGetViewBackupConfig(int id, string config)
+        {
+            try
+            {
+                GetClient(id);
+                var cmd = _terminalClient.RunCommand("cat Configs/config" + config);
+                return new JsonResult(cmd.Result);
+            }
+            catch
+            {
+                return new JsonResult("We had some trouble getting the backup configuration from the remote device");
             }
         }
     }

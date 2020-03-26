@@ -41,7 +41,7 @@
             </div>
             <div id="Config" class="tab-pane fade">
                 <h4>Backup Config Viewer</h4>
-                <select id="BackupSelect"></select>
+                <select id="BackupSelect"></select>&nbsp; <button onclick="btnViewBackupClick()">View Backup</button>
                 <div id="BackupConfig" style="overflow-y: scroll; min-height: 0; max-height: 400px;">
                     <text id="BackupConfigText"></text>
                 </div>
@@ -57,7 +57,6 @@
         </div>
     </div>
     <div>
-        <a asp-page="./Edit" asp-route-id="@Model.Device.ID">Edit</a> |
         <a asp-page="./ListDevices">Back to List</a>
     </div>
 @section Scripts
@@ -182,6 +181,22 @@
                     terminal._innerWindow.scrollTop = terminal._innerWindow.scrollHeight;
                 }
             });
+        }
+        //This function will grab the backup config from the PI that the user selects
+        function btnViewBackupClick() {
+            $.ajax(
+                {
+                    type: "GET",
+                    url: "/DeviceDetails?handler=ViewBackupConfig",
+                    data: { 'id': @Model.Device.ID, 'config': document.getElementById("BackupSelect").value },
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function(data) {
+                        console.log(data);
+                        var configArea = document.getElementById("BackupConfigText");
+                        configArea.innerText = data;
+                    }
+                });
         }
     </script>
 }

@@ -41,7 +41,7 @@
             </div>
             <div id="Config" class="tab-pane fade">
                 <h4>Backup Config Viewer</h4>
-                <select id="BackupSelect"></select>&nbsp; <button onclick="btnViewBackupClick()">View Backup</button>
+                <select id="BackupSelect"></select> &nbsp; <button onclick="btnViewBackupClick()">View Backup</button> &nbsp; <button onclick="btnRollbackClick()">Restore device to this config</button>
                 <div id="BackupConfig" style="overflow-y: scroll; min-height: 0; max-height: 400px;">
                     <text id="BackupConfigText"></text>
                 </div>
@@ -197,6 +197,32 @@
                         configArea.innerText = data;
                     }
                 });
+        }
+        function btnRollbackClick() {
+            var prompt =
+                confirm(
+                    "Are you sure you want to roll back? \n The device will be offline until this is complete \n Do not leave the page until the process completes");
+            if (prompt == true) {
+                $.ajax(
+                    {
+                        type: "GET",
+                        url: "/DeviceDetails?handler=RollbackConfig",
+                        data: { id: @Model.Device.ID, config: document.getElementById("BackupSelect").value },
+                        contentType: "application/json",
+                        dataType: "json",
+                        success: function(data) {
+                            if ("success" == data['result']) {
+                                alert("The device has been rolled back to the selected config. \n " +
+                                    "You may need to wait a moment for connectivity to establish");
+                            } else {
+                                console.log(data['result']);
+                                alert("The device has failed to rollback. \n The error is: " + data['result'] + " \n" +
+                                    "You should still be able to access the console port of the device from the terminal screen");
+                            }
+                        }
+                    });
+            } 
+            //exit method if any other answer aside from ok is given 
         }
     </script>
 }

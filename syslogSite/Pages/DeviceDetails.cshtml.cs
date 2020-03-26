@@ -187,5 +187,26 @@ namespace syslogSite.Pages
                 return new JsonResult("We had some trouble getting the backup configuration from the remote device");
             }
         }
+
+        public ActionResult OnGetRollbackConfig(int id, string config)
+        {
+            try
+            {
+                GetClient(id);
+                var cmd = _terminalClient.CreateCommand("./TestLogin.py && ./Restore.py " + config);
+                return new JsonResult(new
+                {
+                    result = cmd.Result
+                });
+            }
+            catch (Exception e)
+            {
+                return new JsonResult(new
+                {
+                    result = "Failed",
+                    error = e.Message
+                });
+            }
+        }
     }
 }

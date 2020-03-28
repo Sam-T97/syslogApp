@@ -41,7 +41,7 @@
             </div>
             <div id="Config" class="tab-pane fade">
                 <h4>Backup Config Viewer</h4>
-                <select id="BackupSelect"></select>
+                <select id="BackupSelect"></select> &nbsp; <button onclick="btnViewBackupClick()">View Backup</button> &nbsp; <button onclick="btnRollbackClick()">Restore device to this config</button>
                 <div id="BackupConfig" style="overflow-y: scroll; min-height: 0; max-height: 400px;">
                     <text id="BackupConfigText"></text>
                 </div>
@@ -57,7 +57,6 @@
         </div>
     </div>
     <div>
-        <a asp-page="./Edit" asp-route-id="@Model.Device.ID">Edit</a> |
         <a asp-page="./ListDevices">Back to List</a>
     </div>
 @section Scripts
@@ -65,11 +64,13 @@
     <script src="js/terminal.js"></script>
     <script>
         var terminal = new Terminal();
-        $(document).ready(function () {
+        $(document).ready(function() {
             //Setup the terminal environment
             //Overwrite the JS Files presets to enable scrolling and set the terminal size
             terminal._innerWindow.style.overflowY = 'scroll';
             terminal._innerWindow.style.height = '500px';
+            terminal._innerWindow.style.whiteSpace = 'pre';
+            terminal._innerWindow.style.fontFamily = 'monospace';
             terminal.blinkingCursor(true);
             terminal.setHeight('500px');
             terminal.setWidth('1100px');
@@ -97,23 +98,38 @@
                 {
                     type: "GET",
                     url: "/DeviceDetails?handler=BackupConfigs",
-                    data: {},
+                    data: { 'id': @Model.Device.ID },
                     contentType: "application/json",
                     dataType: "json",
                     success: function(data) {
-                        console.log(data);
                         var dropdown = document.getElementById("BackupSelect");
-                        for (var i = 0; i < data.length; i++) {
-                            var opt = document.createElement('option');
-                            opt.appendChild(document.createTextNode(data[i].toString()));
-                            opt.value = data[i].toString();
-                            dropdown.appendChild(opt);
+                        try {
+                            console.log(data);
+                            if (!Array.isArray(data) || !data.length) {
+                                document.getElementById("BackupConfigText").innerText =
+                                    "No backup files were returned. Backups run at midnight each day. \n" +
+                                    "Maybe a backup hasn't run yet? Otherwise check the console cable is functioning correctly";
+                                dropdown.disabled = true;
+                            } else {
+                                for (var i = 0; i < data.length; i++) {
+                                    var opt = document.createElement('option');
+                                    opt.appendChild(document.createTextNode(data[i].toString()));
+                                    opt.value = data[i].toString();
+                                    dropdown.appendChild(opt);
+                                }
+                            }
+                        } catch (err) {
+                            document.getElementById("BackupConfigText").innerText =
+                                "Something went wrong trying to collect the backup config file names \n" +
+                                "Check the remote device is live by looking at its details and try again";
+                            dropdown.disabled = true;
                         }
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
                         document.getElementById("BackupConfigText").innerText =
                             "Something went wrong trying to collect the backup config file names \n" +
                             "Check the remote device is live by looking at its details and try again";
+                        dropdown.disabled = true;
                     }
                 });
             //Grab the running config directly from the device
@@ -131,20 +147,30 @@
                     }
                 });
         });
+
         //This is essentially a looping function where it will call back to itself when the user sends an input 
         //It then primes the terminal for new input using the received data as a 'question'
         function sendCommand(command) {
             $.ajax({
                 type: "GET",
                 url: "/DeviceDetails?handler=Command",
-                data: { command: command },
+                data: { command: command, id: @Model.Device.ID },
                 contentType: "application/json",
                 dataType: "json",
-                success: function (data) {
+                success: function(data) {
                     var message = data.result;
-                    terminal.input(message, function(input) {
-                        sendCommand(input);
-                    });
+                    console.log(message);
+                    if (data.result.includes("Password:")) {
+                        terminal.password(message,
+                            function(input) {
+                                sendCommand(input);
+                            });
+                    } else {
+                        terminal.input(message,
+                            function(input) {
+                                sendCommand(input);
+                            });
+                    }
                     terminal._innerWindow.scrollTop = terminal._innerWindow.scrollHeight;
                 },
                 error: function() {
@@ -155,6 +181,48 @@
                     terminal._innerWindow.scrollTop = terminal._innerWindow.scrollHeight;
                 }
             });
+        }
+        //This function will grab the backup config from the PI that the user selects
+        function btnViewBackupClick() {
+            $.ajax(
+                {
+                    type: "GET",
+                    url: "/DeviceDetails?handler=ViewBackupConfig",
+                    data: { 'id': @Model.Device.ID, 'config': document.getElementById("BackupSelect").value },
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function(data) {
+                        console.log(data);
+                        var configArea = document.getElementById("BackupConfigText");
+                        configArea.innerText = data;
+                    }
+                });
+        }
+        function btnRollbackClick() {
+            var prompt =
+                confirm(
+                    "Are you sure you want to roll back? \n The device will be offline until this is complete \n Do not leave the page until the process completes");
+            if (prompt == true) {
+                $.ajax(
+                    {
+                        type: "GET",
+                        url: "/DeviceDetails?handler=RollbackConfig",
+                        data: { id: @Model.Device.ID, config: document.getElementById("BackupSelect").value },
+                        contentType: "application/json",
+                        dataType: "json",
+                        success: function(data) {
+                            if ("success" == data['result']) {
+                                alert("The device has been rolled back to the selected config. \n " +
+                                    "You may need to wait a moment for connectivity to establish");
+                            } else {
+                                console.log(data['result']);
+                                alert("The device has failed to rollback. \n The error is: " + data['result'] + " \n" +
+                                    "You should still be able to access the console port of the device from the terminal screen");
+                            }
+                        }
+                    });
+            } 
+            //exit method if any other answer aside from ok is given 
         }
     </script>
 }

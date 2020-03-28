@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SyslogShared;
 using SyslogShared.Models;
-using System.Net.NetworkInformation;
 
 namespace syslogSite.Pages
 {
@@ -56,9 +55,10 @@ namespace syslogSite.Pages
                 {
                     feedback = "The server could not reach the IP address you specified. \n" +
                                "Make sure the device you're trying to add is alive and can reach this server";
+                    testPing.Dispose();
                     return Page();
                 }
-
+                testPing.Dispose();
                 _context.Devices.Add(Device);
                 await _context.SaveChangesAsync();
                 

@@ -11,12 +11,10 @@ using System.Text.RegularExpressions;
 using System.Net.Mail;
 using System.Net;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using SyslogShared;
 using System.Net.NetworkInformation;
 using System.Text;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
 namespace syslogListener
 {
@@ -129,30 +127,49 @@ namespace syslogListener
         }
         private static void EmailAlert([Optional]SyslogMessage m, [Optional] List<Device> device)
         {
+            var dbContext = GetContext();
             using var message = new MailMessage();
+            List<string> emails = new List<string>();
             if (m != null)
             {
-                message.To.Add(""); //TODO get emails from db
-                message.From = new MailAddress("syslogsnapper@gmail.com", "SyslogSnapper");
-                message.Subject = "A high priority alert has been received from " + m.RemoteEndPoint.Address;
-                message.Body = "The details are as follows: <br/> Received: " + m.Received
-                                                                              + "<br/> Facility: " + m.Facility
-                                                                              + "<br/> Severity: " + m.Severity
-                                                                              + "<br/> Full Message: " + m.Text;
+                try
+                {
+                    emails = dbContext.MailingListMembers.Where(m => m.MailingListID == 1)
+                        .Select(e => e.Email).ToList();
+                    foreach (var email in emails)
+                    {
+                        message.To.Add(email);
+                    }
+                    message.From = new MailAddress("syslogsnapper@gmail.com", "SyslogSnapper");
+                    message.Subject = "A high priority alert has been received from " + m.RemoteEndPoint.Address;
+                    message.Body = "The details are as follows: <br/> Received: " + m.Received
+                                                                                  + "<br/> Facility: " + m.Facility
+                                                                                  + "<br/> Severity: " + m.Severity
+                                                                                  + "<br/> Full Message: " + m.Text;
+                }catch(Exception e) { Console.WriteLine("There was a problem making the email message: " + e.Message); }
             }
             else
             {
-                StringBuilder hostnamesBuilder = new StringBuilder();
-                foreach (Device d in device)
+                try
                 {
-                    hostnamesBuilder.AppendLine(d.HostName + "<br/>");
-                }
-                message.To.Add(""); //TODO get emails from db
-                message.From = new MailAddress("syslogsnapper@gmail.com", "SyslogSnapper");
-                message.Subject = "Device(s) have failed to heartbeat";
-                message.Body = "The non-responsive devices are: <br/> " + hostnamesBuilder;
-            }
+                    StringBuilder hostnamesBuilder = new StringBuilder();
+                    foreach (Device d in device)
+                    {
+                        hostnamesBuilder.AppendLine(d.HostName + "<br/>");
+                    }
 
+                    emails = dbContext.MailingListMembers.Where(i => i.ID == 2)
+                        .Select(e => e.Email).ToList();
+                    foreach (var email in emails)
+                    {
+                        message.To.Add(email);
+                    }
+
+                    message.From = new MailAddress("syslogsnapper@gmail.com", "SyslogSnapper");
+                    message.Subject = "Device(s) have failed to heartbeat";
+                    message.Body = "The non-responsive devices are: <br/> " + hostnamesBuilder;
+                }catch (Exception e) { Console.WriteLine("There was a problem making the email message: " + e.Message); }
+            }
             message.IsBodyHtml = true;
             try
             {
@@ -164,7 +181,7 @@ namespace syslogListener
                     UseDefaultCredentials = false,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
                     EnableSsl = true,
-                    Credentials = new NetworkCredential("syslogsnapper@gmail.com", gmailPassword)//TODO password here
+                    Credentials = new NetworkCredential("syslogsnapper@gmail.com", gmailPassword)
                 };
                 client.Send(message);
             }

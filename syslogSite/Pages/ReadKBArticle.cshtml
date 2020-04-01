@@ -1,0 +1,32 @@
+﻿@page
+@model syslogSite.Pages.ReadKBArticleModel
+
+@{
+    ViewData["Title"] = "KB Article " + Model.KnowledgeBase.ID;
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>KB Article</h1>
+<hr/>
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.KnowledgeBase.Title)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.KnowledgeBase.Title)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.KnowledgeBase.Article)
+        </dt>
+        <dd class="col-sm-10">
+            <span style="overflow-y: scroll; min-height: 0; max-height: 800px; white-space: pre;">
+                @Html.DisplayFor(model => model.KnowledgeBase.Article)
+            </span>
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-page="./UpdateKBArticle" asp-route-id="@Model.KnowledgeBase.ID">Edit</a> |
+    <a asp-page="./KnowledgeBase">Back to List</a>
+</div>

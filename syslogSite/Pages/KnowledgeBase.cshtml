@@ -1,0 +1,50 @@
+﻿@page
+@model syslogSite.Pages.KnowledgeBaseModel
+
+@{
+    ViewData["Title"] = "KnowledgeBase";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Knowledge Base</h1>
+<p>
+    <a asp-page="CreateKBArticle">Create a New Article</a>
+</p>
+<hr />
+<form>
+    Search for an article: <input type="text" asp-for="SearchString" /> <input type="submit" value="Search" class="btn btn-primary" />
+</form>
+<br />
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Articles:
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.KnowledgeBase)
+        {
+            <tr>
+                <td>
+                    <a asp-page="./ReadKBArticle" asp-route-id="@item.ID">@Html.DisplayFor(modelItem => item.Title)</a>
+                </td>
+                <td>
+                    <a asp-page="./ReadKBArticle" asp-route-id="@item.ID">Read Article</a>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-page-handler="Delete" asp-route-id="@item.ID">Delete</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@if (!Model.KnowledgeBase.Any())
+{
+    <p class="text-center">
+        No results have been returned. Try refining your search and try again.
+    </p>
+}

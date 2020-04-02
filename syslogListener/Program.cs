@@ -73,7 +73,7 @@ namespace syslogListener
                         DeviceID = dbContext.Devices.Where(x => x.IP == m.RemoteEndPoint.Address.ToString()).Select(x => x.ID).First()
                     };
                     dbContext.alerts.Add(Alert);
-                    if (Alert.Severity < 3)
+                    if (Alert.Severity <= 3)
                     {
                         Task.Run(() => EmailAlert(m));
                     }
@@ -81,7 +81,7 @@ namespace syslogListener
                     var saveChanges = dbContext.SaveChanges();
                     Console.WriteLine("Message handled and saved to database");
                 }
-                catch (Exception e)
+                catch
                 {
                     Thread.Sleep(2000);
                 }
@@ -91,11 +91,10 @@ namespace syslogListener
         private static void HeartBeat()
         {
             var dbContext = GetContext();
-            int interval;
             int.TryParse(dbContext.appvars.Where(a => a.VariableName == "HBInterval")
                 .Select(a => a.Value)
-                .FirstOrDefault(),out interval);
-            if (interval == 0) interval = 10;
+                .FirstOrDefault(),out var interval);
+            if (interval < 10) interval = 10;
             while (true)
             {
                 try

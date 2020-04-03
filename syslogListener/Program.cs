@@ -101,14 +101,14 @@ namespace syslogListener
                 {
                     Console.WriteLine("Starting heartbeat checks");
                     List<Device> devices = new List<Device>();
+                    Ping testPing = new Ping();
                     foreach (Device d in dbContext.Devices)
                     {
-                        Ping testPing = new Ping();
                         PingReply reply = testPing.Send(d.IP,2000);
                         if (reply.Status == IPStatus.Success) {continue; }
                         devices.Add(d);
                     }
-
+                    testPing.Dispose();
                     if (devices.Count != 0)
                     {
                         Task.Run(() => EmailAlert(null, devices));

@@ -10,6 +10,9 @@ namespace SyslogShared
         public DbSet<AppVars>appvars { get; set; }
         public DbSet<Device>Devices { get; set; }
         public DbSet<RemoteDevice>RemoteDevices { get; set; }
+        public DbSet<KnowledgeBase> KnowledgeBases { get; set; }
+        public DbSet<MailingList> MailingLists { get; set; }
+        public DbSet<MailingListMember> MailingListMembers { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {

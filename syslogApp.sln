@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "syslogListener", "syslogLis
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "syslogSite", "syslogSite\syslogSite.csproj", "{928009D1-D11A-4F18-99E1-8DD28AF0BDCC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyslogShared", "SyslogShared\SyslogShared.csproj", "{DEE6A4F6-C6B8-4762-97D8-DBE2C6B2C0A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SyslogShared", "SyslogShared\SyslogShared.csproj", "{DEE6A4F6-C6B8-4762-97D8-DBE2C6B2C0A4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

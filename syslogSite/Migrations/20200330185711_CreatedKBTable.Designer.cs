@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SyslogShared;
 
 namespace syslogSite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200330185711_CreatedKBTable")]
+    partial class CreatedKBTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -298,41 +300,6 @@ namespace syslogSite.Migrations
                     b.ToTable("KnowledgeBases");
                 });
 
-            modelBuilder.Entity("SyslogShared.Models.MailingList", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("ListName")
-                        .IsRequired()
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("MailingLists");
-                });
-
-            modelBuilder.Entity("SyslogShared.Models.MailingListMember", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<int>("MailingListID")
-                        .HasColumnType("int");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("MailingListID");
-
-                    b.ToTable("MailingListMembers");
-                });
-
             modelBuilder.Entity("SyslogShared.Models.RemoteDevice", b =>
                 {
                     b.Property<int>("ID")
@@ -410,15 +377,6 @@ namespace syslogSite.Migrations
                     b.HasOne("SyslogShared.Models.Device", "Device")
                         .WithMany("Alerts")
                         .HasForeignKey("DeviceID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("SyslogShared.Models.MailingListMember", b =>
-                {
-                    b.HasOne("SyslogShared.Models.MailingList", "MailingList")
-                        .WithMany("MailingListMembers")
-                        .HasForeignKey("MailingListID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

@@ -1,0 +1,31 @@
+﻿@page
+@model syslogSite.Pages.DeleteMailingListMemberModel
+
+@{
+    ViewData["Title"] = "DeleteMailingListMember";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Delete Mailing List Member</h1>
+<hr/>
+<div class="row">
+    <div class="col-md-4">
+        @Model.message
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="MailingListMember.Email" class="control-label"></label>
+                <input asp-for="MailingListMember.Email" class="form-control" />
+                <span asp-validation-for="MailingListMember.Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Mailing list to remove from:</label>
+                <select asp-for="MailingListMember.MailingListID" class="form-control" asp-items="ViewBag.MailingListID"></select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Add to List" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+<a asp-page="./Index">Back to Home</a>

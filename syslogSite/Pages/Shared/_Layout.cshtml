@@ -53,9 +53,6 @@
                                         <a class="dropdown-item" asp-page="RemoveRemoteDevice">Remove a Remote Device</a>
                                         <div class="dropdown-divider"></div>
                                         <a class="dropdown-item" asp-page="./ListDevices">View Devices</a>
-                                        <a class="dropdown-item" href="#">View Remote Devices</a>
-                                        <a class="dropdown-item" asp-page="./ConfigRollbackTest">Test Config Rollback</a>
-                                        <a class="dropdown-item" href="#">Something else here</a>
                                     </div>
                                 </div>
                             </li>
@@ -63,16 +60,8 @@
 
                         @if (SignInManager.IsSignedIn(User))
                         {
-                            <li>
-                                <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle bg-dark border-dark" type="button" id="reportingDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Reporting
-                                    </button>
-                                    <div class="dropdown-menu" aria-labelledby="reportingDropDown">
-                                        <a class="dropdown-item" href="#">Custom Report</a>
-                                        <a class="dropdown-item" href="#">Pre-made Reports</a>
-                                    </div>
-                                </div>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-page="KnowledgeBase">Knowledge Base</a>
                             </li>
                         }
                     </ul>

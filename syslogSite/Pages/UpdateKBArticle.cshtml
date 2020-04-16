@@ -1,0 +1,39 @@
+﻿@page
+@model syslogSite.Pages.UpdateKBArticleModel
+
+@{
+    ViewData["Title"] = "UpdateKBArticle";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Update KB Article</h1>
+<hr />
+<div>
+    <div>
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="KnowledgeBase.ID" />
+            <div class="form-group" style="display:inline-block">
+                <label asp-for="KnowledgeBase.Title" class="control-label"></label>
+                <input asp-for="KnowledgeBase.Title" class="form-control" style="width:600px" />
+                <span asp-validation-for="KnowledgeBase.Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="KnowledgeBase.Article" class="control-label"></label>
+                <textarea asp-for="KnowledgeBase.Article" class="form-control"></textarea>
+                <span asp-validation-for="KnowledgeBase.Article" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./KnowledgeBase">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

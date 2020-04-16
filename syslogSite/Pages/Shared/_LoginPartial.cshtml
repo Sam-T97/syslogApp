@@ -16,11 +16,12 @@
                         <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Register">Register Users</a>
                         <a class="dropdown-item" asp-area="Identity" asp-page="/Account/ResetPassword">Reset Users Password</a>
                         <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/DeletePersonalData">Delete a user</a>
+                        <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/ChangeUserAccess">Modify User Access</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Set the Heartbeat Interval</a>
+                        <a class="dropdown-item" asp-page="UpdateHBInterval">Set the Heartbeat Interval</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Add users to email alerting</a>
-                        <a class="dropdown-item" href="#">Remove user from email alerting</a>
+                        <a class="dropdown-item" asp-page="AddMailingListMember">Add someone to email alerting</a>
+                        <a class="dropdown-item" asp-page="DeleteMailingListMember">Remove someone from email alerting</a>
                     </div>
                 </div>
             </li>

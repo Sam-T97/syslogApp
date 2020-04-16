@@ -1,0 +1,69 @@
+﻿@page
+@model syslogSite.Pages.AddMailingListMemberModel
+
+@{
+    ViewData["Title"] = "AddMailingListMember";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Add Mailing List Member</h1>
+
+<h4>Add a Member to a Mailing List</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        @Model.message
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="MailingListMember.Email" class="control-label"></label>
+                <input asp-for="MailingListMember.Email" class="form-control"/>
+                <span asp-validation-for="MailingListMember.Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Mailing list to add to:</label>
+                <select asp-for="MailingListMember.MailingListID" class="form-control" asp-items="ViewBag.MailingListID"></select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Add to List" class="btn btn-primary"/>
+                <button type="button" class="btn btn-secondary" onclick="btnShowClick()">Show List Members</button>
+            </div>
+        </form>
+    </div>
+    <div class="offset-2 col-md-6">
+        <p>
+            The high alert mailing list will be used when an alert is received from a device that is of priority 2 or higher. (Critical to Emergency) <hr/>
+            The system down mailing list will be used when a system fails to respond to a heartbeat check. <hr/>
+            You can add any emails to these mailing lists, there is no requirement for this email to be used by an application user (ideal for need to know management).
+        </p>
+    </div>
+</div>
+<div id="MailingListMembers" style="overflow-y: scroll; max-height: 300px; min-height: 0;">
+
+</div>
+<div>
+    <a asp-page="Index">Back to Home</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        function btnShowClick() {
+            $.ajax(
+                {
+                    type: "GET",
+                    url: "/AddMailingListMember?handler=Members",
+                    data: { id: document.getElementById("MailingListMember_MailingListID").value },
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (data) {
+                        var target = document.getElementById("MailingListMembers");
+                        target.innerText = "Mailing List Members: \n";
+                        data.emails.forEach(function(email) {
+                            target.innerText = target.innerText + email + "\n";
+                        });
+                    }
+                });
+        }
+    </script>
+}

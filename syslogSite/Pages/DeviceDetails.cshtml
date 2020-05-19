@@ -8,7 +8,9 @@
 }
 @if (IdentityManager.IsSignedIn(User) && User.IsInRole("Admin") || User.IsInRole("Engineer"))
 {
+    <div class="text-center">
     <h1>Device Details</h1>
+    </div>
     <div>
         <h4>@Html.DisplayFor(model => model.Device.HostName)</h4>
         <hr/>

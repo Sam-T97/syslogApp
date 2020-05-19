@@ -49,8 +49,8 @@
                                     <div class="dropdown-menu" aria-labelledby="devicesDropDownButton">
                                         <a class="dropdown-item" asp-page="./RegisterDevice">Register Device for Monitoring</a>
                                         <a class="dropdown-item" asp-page="./RemoveDevice">Remove Device from System</a>
-                                        <a class="dropdown-item" asp-page="/RegisterRemoteDevice">Create a new Remote Device</a>
-                                        <a class="dropdown-item" asp-page="RemoveRemoteDevice">Remove a Remote Device</a>
+                                        <a class="dropdown-item" asp-page="./RegisterRemoteDevice">Create a new Remote Device</a>
+                                        <a class="dropdown-item" asp-page="./RemoveRemoteDevice">Remove a Remote Device</a>
                                         <div class="dropdown-divider"></div>
                                         <a class="dropdown-item" asp-page="./ListDevices">View Devices</a>
                                     </div>
@@ -61,7 +61,7 @@
                         @if (SignInManager.IsSignedIn(User))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-light" asp-page="KnowledgeBase">Knowledge Base</a>
+                                <a class="nav-link text-light" asp-page="./KnowledgeBase">Knowledge Base</a>
                             </li>
                         }
                     </ul>

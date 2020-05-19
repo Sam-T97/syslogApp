@@ -66,7 +66,7 @@ namespace syslogSite.Pages
                 }
             }
 
-            return RedirectToPage("./Index");
+            return RedirectToPage("./KnowledgeBase");
         }
 
         private bool KnowledgeBaseExists(int id)

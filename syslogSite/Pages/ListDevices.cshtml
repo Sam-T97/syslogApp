@@ -10,8 +10,9 @@
 }
 @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin") || User.IsInRole("Engineer"))
 {
+    <div class="text-center">
     <h1>Devices in Monitoring</h1>
-
+        </div>
     <p>
         <a asp-page="RegisterDevice">Add New Device</a>
     </p>

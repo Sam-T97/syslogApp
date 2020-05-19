@@ -10,7 +10,9 @@
 }
 @if (IdentityManager.IsSignedIn(User) && User.IsInRole("Admin") || User.IsInRole("Engineer"))
 {
-    <h1>Devices with Alerts:</h1>
+    <div class="text-center">
+    <h1>Devices with Alerts</h1>
+    </div>
     <table class="table">
         <thead>
         <tr>

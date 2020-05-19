@@ -32,6 +32,9 @@
 
 
   <ItemGroup>
+    <Content Update="Pages\UpdateHBInterval.cshtml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
     <Content Update="wwwroot\Assets\icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

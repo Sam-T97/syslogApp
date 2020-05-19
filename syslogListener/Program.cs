@@ -64,13 +64,13 @@ namespace syslogListener
                     
                     var Alert = new Alerts
                     {
-                        Facility = (Regex.Match(m.Text,@"(?<=%)(.*?)(?=-)").ToString()),//m.Facility.ToString(),
-                        Received = m.Received,
-                        HostIP = m.RemoteEndPoint.Address.ToString(),
-                        Severity = (int)m.Severity,
-                        Message = m.Text,
-                        Unread = true,
-                        DeviceID = dbContext.Devices.Where(x => x.IP == m.RemoteEndPoint.Address.ToString()).Select(x => x.ID).First()
+                        Facility = (Regex.Match(m.Text,@"(?<=%)(.*?)(?=-)").ToString()), //Facility/Mneonic extraction
+                        Received = m.Received, //When
+                        HostIP = m.RemoteEndPoint.Address.ToString(), //Who
+                        Severity = (int)m.Severity, //How serious
+                        Message = m.Text, //Entire message
+                        Unread = true, //Set unread flag
+                        DeviceID = dbContext.Devices.Where(x => x.IP == m.RemoteEndPoint.Address.ToString()).Select(x => x.ID).First() //Grab the device hostname from the IP field
                     };
                     dbContext.alerts.Add(Alert);
                     if (Alert.Severity <= 3)

@@ -8,8 +8,9 @@
 }
 @if (IdentityManager.IsSignedIn(User) && User.IsInRole("Admin") || User.IsInRole("Engineer"))
 {
-    <h1>Alerts for @UnreadAlertsDeviceFilteredModel.Hostname:</h1>
-
+    <div class="text-center">
+    <h1>Alerts for @UnreadAlertsDeviceFilteredModel.Hostname</h1>
+    </div>
     <p>
     </p>
     <table class="table">

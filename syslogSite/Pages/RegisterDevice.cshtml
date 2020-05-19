@@ -8,8 +8,9 @@
 }
 @if (IdentityManager.IsSignedIn(User) && User.IsInRole("Admin") || User.IsInRole("Engineer"))
 {
+    <div class="text-center">
     <h1>Register Device for Monitoring</h1>
-
+        </div>
     <h4>Device Details:</h4>
     <hr/>
     <div class="row">
@@ -36,10 +37,10 @@
             <div>
                 <p>
                     <br/>
-                    The IP address for your system will be the internal address it is using to communicate with the monitoring system.
+                    The IP address for your device will be the internal address it is using to communicate with the monitoring system.
                     <br/>
                     <br/>
-                    Unsure what the hostname is? Enter the IP address and select detect hostname, I will try to automatically find it for you.
+                    The hostname is a friendly name that will help you identify this device. Typically the hostname should match that set on your device
                 </p>
             </div>
         </div>

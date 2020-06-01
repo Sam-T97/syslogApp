@@ -133,7 +133,7 @@ namespace syslogListener
             {
                 try
                 {
-                    emails = dbContext.MailingListMembers.Where(m => m.MailingListID == 1)
+                    emails = dbContext.MailingListMembers.Where(i => i.MailingListID == 1)
                         .Select(e => e.Email).ToList();
                     foreach (var email in emails)
                     {
@@ -157,7 +157,7 @@ namespace syslogListener
                         hostnamesBuilder.AppendLine(d.HostName + "<br/>");
                     }
 
-                    emails = dbContext.MailingListMembers.Where(i => i.ID == 2)
+                    emails = dbContext.MailingListMembers.Where(i => i.MailingListID == 2)
                         .Select(e => e.Email).ToList();
                     foreach (var email in emails)
                     {

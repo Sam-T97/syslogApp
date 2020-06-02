@@ -73,7 +73,7 @@ namespace syslogListener
                         DeviceID = dbContext.Devices.Where(x => x.IP == m.RemoteEndPoint.Address.ToString()).Select(x => x.ID).First() //Grab the device hostname from the IP field
                     };
                     dbContext.alerts.Add(Alert);
-                    if (Alert.Severity <= 3)
+                    if (Alert.Severity < 3)
                     {
                         Task.Run(() => EmailAlert(m));
                     }
@@ -175,7 +175,7 @@ namespace syslogListener
                 using var client = new SmtpClient()
                 {
                     Host = "smtp.gmail.com",
-                    TargetName = "STARTTLS/smtp.gmail.com",
+                    TargetName = "smtp.gmail.com",
                     Port = 587,
                     UseDefaultCredentials = false,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
